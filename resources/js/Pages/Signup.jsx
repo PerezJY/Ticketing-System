@@ -1,19 +1,30 @@
 import { useState } from "react";
 import SignupImage from "../../assets/hero-3.png";
 import QtechLogo from "../../assets/qtechlogo.png";
-import { Link } from "react-router-dom";
+import { Link } from "@inertiajs/react";
+import api from "../axios";
 
-function Signup() {
+
+const Signup = () => {
+  const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle form submission logic here
-    // TODO: CAll API to register user
-    // For now, we'll just log the form data
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
-    alert("Form submitted!");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    await api.get('/sanctum/csrf-cookie');
+    try {
+      await api.post('/signup', form);
+      alert('User registered successfully');
+    } catch (error) {
+      alert('Error registering user');
+    }
+  
   }
 
   return (
@@ -36,26 +47,30 @@ function Signup() {
       {/* Right Section */}
       <div className="w-1/2 bg-white p-12 rounded-r-xl flex flex-col justify-center">
         <div className="flex justify-end mb-4">
-          <a href="#" className="text-sm font-medium text-black">
+          <Link to = "#" className="text-sm font-medium text-black">
             About Us
-          </a>
+          </Link>
         </div>
 
         <h2 className="text-2xl font-bold text-blue-600 mb-2">Sign Up</h2>
         <p className="text-sm mb-4">
           Already have an account?{" "}
-          <a href="/Signin" className="text-blue-600 font-medium hover:underline">Signin</a>
+          <Link to="/Signin" className="text-blue-600 font-medium hover:underline">Signin</Link>
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"
             placeholder="Name"
+            value={form.name}
+            onChange={handleChange}
             className="w-full border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
           <input
             type="email"
             placeholder="Email"
+            value={form.email}
+            onChange={handleChange}
             className="w-full border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
 
@@ -64,6 +79,8 @@ function Signup() {
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Password"
+              value={form.password}
+              onChange={handleChange}
               className="w-full border rounded-md px-4 py-2 pr-16 focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
             <button
