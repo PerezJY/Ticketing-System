@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import SignupImage from "../assets/signup.jpg";
 import QtechLogo from "../assets/qtechlogo.png";
 import { Link, useNavigate } from "react-router-dom";
+import { useStateContext } from "../contexts/ContextProvider";
 
 export const Signin = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -9,44 +10,76 @@ export const Signin = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
+  const { user,login,token} = useStateContext();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser && storedUser !== "undefined") {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        const { role } = parsedUser;
+        switch (role) {
+          case "customer":
+            navigate("/customer");
+            break;
+          case "admin":
+            navigate("/admin");
+            break;
+          case "agent":
+            navigate("/agent");
+            break;
+          default:
+            navigate("/");
+        }
+      } catch (error) {
+        console.error("Failed to parse user data:", error);
+        localStorage.removeItem("user"); // Clean up if parsing fails
+      }
+    }
+  }, [navigate]);
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await fetch("http://localhost:8000/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
 
-      if (!response.ok) {
-        throw new Error("Login failed");
-      }
-
+    if (!email || !password) {
+      setError("Please fill in all fields.");
+      return;
+    }
+      try{
+        const response = await fetch("http://localhost:8000/api/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password,
+          })
+        });
+        if (!response.ok) {
+          throw new Error("Login failed");
+        }
+      // Optional: extract data if needed
       const data = await response.json();
       console.log("Login successful:", data);
 
-      const { user } = data;
-      localStorage.setItem("user", JSON.stringify(user));
+      const {  user,token } = data;
 
+      login(user,token);
+      
       const { role } = user;
       switch (role) {
         case "customer":
-          navigate("/customer/dashboard");
+          navigate("/customer");
           break;
         case "admin":
-          navigate("/admin/dashboard");
+          navigate("/admin");
           break;
         case "agent":
-          navigate("/agent/dashboard");
+          navigate("/agent");
           break;
         default:
           navigate("/dashboard");
@@ -55,8 +88,9 @@ export const Signin = () => {
       console.error("Login failed:", err);
       setError("Invalid email or password.");
     }
-  };
-
+  }
+  
+  
   return (
     <div className="min-h-screen flex text-gray-900 font-sans">
       {/* Left Section */}
@@ -101,7 +135,9 @@ export const Signin = () => {
             type="email"
             placeholder="Email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value) }
+
+
             className="w-full border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
             autoFocus={true}
             required
@@ -150,7 +186,7 @@ export const Signin = () => {
         </form>
       </div>
     </div>
-  );
+  )
 };
 
 export default Signin;

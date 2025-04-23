@@ -4,8 +4,14 @@ import { useNavigate } from "react-router-dom";
 import { IoMdArrowBack } from "react-icons/io";
 
 export const Tickets = () => {
-  const { activeMenu } = useStateContext();
+  const { activeMenu,user,login} = useStateContext();
   const navigate = useNavigate();
+
+  
+  // Redirect if not logged in
+  if(!login && !user){
+    return <Navigate to ='/'/>
+  }
 
   // dummy data
   const data = [

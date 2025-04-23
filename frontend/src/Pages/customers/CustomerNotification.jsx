@@ -1,46 +1,45 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useStateContext } from "../../contexts/ContextProvider";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 
 const CustomerNotification = () => {
-  const { activeMenu } = useStateContext();
+  const { activeMenu, user, login, token } = useStateContext();
+  const [notifications, setNotifications] = useState([]);
   const navigate = useNavigate();
 
-  const notifications = [
-    {
-      ticketId: "ASD123456789",
-      category: "POS for Retail and F&B",
-      issue: "Payment terminal not processing ...",
-      status: "Unresolved",
-      customer: "Juan Dela Cruz",
-      date: "April 10, 2025",
-      description: "Payment terminal is not working at checkout counter.",
-      agent: "John Doe",
-    },
-    {
-      ticketId: "ASD987654321",
-      category: "POS for Retail and F&B",
-      issue: "Printer not printing receipts ...",
-      status: "Resolved",
-      customer: "Maria Clara",
-      date: "April 9, 2025",
-      description: "Receipt printer is jammed and not printing.",
-      agent: "Jane Smith",
-    },
-    {
-      ticketId: "ASD654123987",
-      category: "qSA (Quick and Simple Accounting)",
-      issue: "Unable to generate financial report ...",
-      status: "Resolved",
-      customer: "Jose Rizal",
-      date: "April 8, 2025",
-      description: "System hangs when generating report.",
-      agent: "Alex Reyes",
-    },
-  ];
+  useEffect(() => {
+    if (!token && !user?.id) {
+      return <Navigate to="/" />; // Redirect if no token
+    }
+
+    const fetchTickets = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/api/notif", {
+          headers: {
+            Authorization: `Bearer ${token}`, // Send token for authentication
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch tickets");
+        }
+
+        const data = await response.json(); // Parse the response data
+        console.log(data); // Log the response to verify its structure
+
+        // Set the fetched data to notifications state
+        setNotifications(data); // Assuming the response returns an array of tickets
+      } catch (error) {
+        console.error("Error fetching tickets:", error);
+      }
+    };
+   
+
+    fetchTickets();
+  }, [token]);
 
   const handleRowClick = (notif) => {
-    navigate(`/customer/tickets/notificationDetails/${notif.ticketId}`, {
+    navigate(`/customer/tickets/notificationDetails/${notif.id}`, {
       state: notif,
     });
   };
@@ -52,7 +51,6 @@ const CustomerNotification = () => {
       }`}
     >
       <div className="text-3xl font-bold text-[#1D4ED8] mb-6">Notification</div>
-
       <div className="bg-white rounded-lg shadow-sm p-6 min-h-[500px] space-y-2">
         {/* Header */}
         <div className="grid grid-cols-[repeat(4,_1fr)] text-center font-semibold text-gray-600 text-sm py-2">
@@ -63,28 +61,30 @@ const CustomerNotification = () => {
         </div>
 
         {/* Rows */}
-        {notifications.map((notif, index) => (
-          <div
-            key={index}
-            onClick={() => handleRowClick(notif)}
-            className="grid grid-cols-[repeat(4,_1fr)] bg-[#EEF0FF] rounded-md text-center text-sm text-gray-700 py-3 px-4 items-center cursor-pointer hover:bg-[#dfe3ff] transition"
-          >
-            <div className="truncate">{notif.ticketId}</div>
-            <div className="truncate">{notif.category}</div>
-            <div className="truncate">{notif.issue}</div>
-            <div className="font-medium">
-              <span
-                className={`${
-                  notif.status === "Resolved"
-                    ? "text-green-600"
-                    : "text-red-500"
-                }`}
-              >
-                {notif.status}
-              </span>
+        {notifications.length > 0 ? (
+          notifications.map((notif, index) => (
+            <div
+              key={index}
+              onClick={() => handleRowClick(notif)}
+              className="grid grid-cols-[repeat(4,_1fr)] bg-[#EEF0FF] rounded-md text-center text-sm text-gray-700 py-3 px-4 items-center cursor-pointer hover:bg-[#dfe3ff] transition"
+            >
+              <div className="truncate">{notif.id}</div>
+              <div className="truncate">{notif.category}</div>
+              <div className="truncate">{notif.ticket_body}</div>
+              <div className="font-medium">
+                <span
+                  className={`${
+                    notif.status === "Resolved" ? "text-green-600" : "text-red-500"
+                  }`}
+                >
+                  {notif.status}
+                </span>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p>No tickets available.</p>
+        )}
       </div>
     </div>
   );

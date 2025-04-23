@@ -1,4 +1,4 @@
-import Signin from "../pages/Signin";
+import Signin from "../Pages/Signin";
 import Signup from "../pages/Signup";
 import Forgotpass from "../Pages/Forgotpass";
 import Otp from "../Pages/Otp";

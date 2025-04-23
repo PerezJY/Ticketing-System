@@ -4,6 +4,7 @@ import { FiUser } from "react-icons/fi";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { Navigate } from "react-router-dom";
 
 const profileSchema = yup.object().shape({
   firstName: yup.string().required("First name is required."),
@@ -29,9 +30,14 @@ const passwordSchema = yup.object().shape({
 });
 
 export const Profile = () => {
-  const { activeMenu } = useStateContext();
+  const { activeMenu,user,login } = useStateContext();
   const [showPassword, setShowPassword] = React.useState(false);
 
+  
+  // Redirect if not logged in
+  if(!login && !user){
+    return <Navigate to ='/'/>
+  }
   const {
     register,
     handleSubmit,

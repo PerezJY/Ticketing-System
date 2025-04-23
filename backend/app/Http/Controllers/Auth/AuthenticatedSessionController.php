@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Hash;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -14,21 +16,33 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        // Validate incoming request
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
-    
-        if (!Auth::attempt($request->only('email', 'password'))) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
+
+        // Find user by email
+        $user = User::where('email', $request->email)->first();
+
+        // Check if user exists and password matches
+        if ($user && Hash::check($request->password, $user->password)) {
+            // Create a token using Passport
+            $token = $user->createToken("ACCESS_TOKEN")->plainTextToken;
+
+            return response()->json([
+                'message' => 'Login successful',
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role' => $user->role ?? null,
+                ],
+                'token' => $token,
+            ]);
         }
-    
-        $user = Auth::user();
-    
-        return response()->json([
-            'message' => 'Login successful',
-            'user' => $user,
-        ]);
+
+        return response()->json(['message' => 'Invalid credentials'], 401);
     }
 
     /**

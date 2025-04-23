@@ -9,7 +9,7 @@ const AgentRoutes = () => {
   return (
     <Routes>
       <Route
-        path="/agent/dashboard"
+        path="/agent"
         element={
           <Layout>
             <AgentDashboard />

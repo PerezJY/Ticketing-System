@@ -3,8 +3,14 @@ import { useStateContext } from "../../contexts/ContextProvider";
 import { useNavigate } from "react-router-dom";
 
 const Notification = () => {
-  const { activeMenu } = useStateContext();
+  const { activeMenu,user,login } = useStateContext();
   const navigate = useNavigate();
+
+  
+  // Redirect if not logged in
+  if(!login && !user){
+    return <Navigate to ='/'/>
+  }
 
   const notifications = [
     {

@@ -14,7 +14,7 @@ const AdminRoutes = () => {
   return (
     <Routes>
       <Route
-        path="/admin/dashboard"
+        path="/admin"
         element={
           <Layout>
             <Dashboard />
@@ -22,7 +22,7 @@ const AdminRoutes = () => {
         }
       />
       <Route
-        path="/agent"
+        path="/admin/agent"
         element={
           <Layout>
             <Agent />

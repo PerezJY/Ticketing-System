@@ -4,10 +4,15 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { IoMdArrowBack } from "react-icons/io";
 
 const AgentNotifTicketDetails = () => {
-  const { activeMenu } = useStateContext();
   const navigate = useNavigate();
   const location = useLocation();
   const ticketData = location.state;
+  const { activeMenu,user,login } = useStateContext();
+    
+    // Redirect if not logged in
+    if(!login && !user){
+      return <Navigate to ='/'/>
+    }
   
   if (!ticketData) {
     return (

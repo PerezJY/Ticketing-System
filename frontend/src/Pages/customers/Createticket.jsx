@@ -1,17 +1,69 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect} from "react";
 import { useStateContext } from "../../contexts/ContextProvider";
+import { Navigate } from "react-router-dom";
 
 const Createticket = () => {
-  const { activeMenu } = useStateContext();
+  const { activeMenu, user,login,token} = useStateContext();
   const fileRef = useRef();
   const imageRef = useRef();
-  const [preview, setPreview] = useState(null);  
+  const [preview, setPreview] = useState(null);
+  const [category, setCategory] = useState("");
+  const [email, setEmail] = useState("");
+  const [ticketBody, setTicketBody] = useState(""); 
 
-  const handleSubmit = (ev) => {
+  // Redirect if not logged in
+  if(!user?.id){
+    return <Navigate to ='/'/>
+  }
+
+  useEffect(() => {
+    if (user?.email) {
+      setEmail(user.email);
+    }
+  }, [user]);
+
+  const handleSubmit = async (ev) => {
     ev.preventDefault();
-    alert("TODO: submit create ticket");
+    try {
+      const formData = new FormData();
+      formData.append("email", email);
+      formData.append("category", category);
+      formData.append("ticket_body", ticketBody);
+      formData.append("user_id", user.id);
+      formData.append("customer_name", user.name);
+      
+      if (fileRef.current && fileRef.current.files[0]) {
+        formData.append("file", fileRef.current.files[0]); // Append the file
+      }
+  
+      const response = await fetch("http://localhost:8000/api/tickets", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`
+          // Note: DO NOT set Content-Type manually when using FormData.
+        },
+        body: formData,
+        credentials: 'include',
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to create ticket.");
+      }
+  
+      alert("Ticket created successfully!");
+  
+      // Clear form
+      setCategory("");
+      setTicketBody("");
+      setPreview(null);
+      fileRef.current.value = "";
+    } catch (error) {
+      alert("Error creating ticket. Please try again.");
+      console.error(error);
+    }
   };
-
+  
   const handleUploadfile = () => {
     if (fileRef.current) {
       fileRef.current.click();
@@ -48,13 +100,19 @@ const Createticket = () => {
                 <input
                   type="email"
                   placeholder="Type Email"
+                  value={email}
+                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full border border-gray-300 p-2 rounded-md focus:outline-none"
                 />
               </div>
               <div className="flex-1">
                 <label className="block mb-1 text-sm font-medium text-gray-600">Categories</label>
-                <select className="w-full border border-gray-300 p-2 rounded-md focus:outline-none">
-                  <option>Choose Type</option>
+                 <select
+                  className="w-full border border-gray-300 p-2 rounded-md focus:outline-none"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                >
+                  <option value="">Choose Type</option>
                   <option>QTech Inventory Support System</option>
                   <option>QTech Utility Billing System</option>
                   <option>Philippine HR, Payroll and Time Keeping System</option>
@@ -70,6 +128,8 @@ const Createticket = () => {
                 placeholder="Type ticket issue here.."
                 className="w-full border border-gray-300 p-3 rounded-md focus:outline-none"
                 rows={5}
+                value={ticketBody}  
+                onChange={(e) => setTicketBody(e.target.value)} 
               ></textarea>
             </div>
 

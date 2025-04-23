@@ -1,9 +1,13 @@
+import { Navigate } from "react-router-dom";
 import { useStateContext } from "../../contexts/ContextProvider";
 import { FaEnvelope, FaCreditCard, FaUndo, FaSearch, FaTruck, FaDollarSign, FaEdit, FaQuestionCircle } from "react-icons/fa";
 import image from '../../assets/hero-3.png'
 
 const CustomerDashboard = () => {
-  const { activeMenu } = useStateContext();
+  const { activeMenu,user,login,logout } = useStateContext();
+  if(!user?.id){
+      return <Navigate to ='/'/>
+    }
 
   return (
     <div
