@@ -108,8 +108,8 @@ export const Tickets = () => {
               <div className={`truncate ${getPriorityColor(item.priority)}`}>
                 {item.priority}
               </div>
-              <div className="truncate">{item.agent}</div>
-              <div className="truncate">{item.date}</div>
+              <div className="truncate">{item.agent_name}</div>
+              <div className="truncate">{item.created_at}</div>
               <div className="truncate">
                 <span className={`truncate ${statusColor(item.status)}`}>
                   {item.status}

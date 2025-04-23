@@ -11,7 +11,7 @@ export const Dashboard = () => {
     return <Navigate to ='/'/>
   }
 
-
+//dummy data
   const data = [
     {
       id: 112381389173,
