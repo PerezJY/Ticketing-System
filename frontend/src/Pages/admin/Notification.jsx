@@ -1,20 +1,19 @@
 import React from "react";
 import { useStateContext } from "../../contexts/ContextProvider";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 
 const Notification = () => {
-  const { activeMenu,user,login } = useStateContext();
+  const { activeMenu, user, login } = useStateContext();
   const navigate = useNavigate();
 
-  
   // Redirect if not logged in
-  if(!login && !user){
-    return <Navigate to ='/'/>
+  if (!login && !user) {
+    return <Navigate to="/" />;
   }
 
   const notifications = [
     {
-      ticketId: "ASD123456789",
+      ticketId: 1,
       category: "POS for Retail and F&B",
       issue: "Payment terminal not processing ...",
       status: "Unresolved",
@@ -46,7 +45,7 @@ const Notification = () => {
   ];
 
   const handleRowClick = (notif) => {
-    navigate(`/admin/notificationDetails/${notif.ticketId}`, {
+    navigate(`/admin/notification/${notif.ticketId}`, {
       state: notif,
     });
   };

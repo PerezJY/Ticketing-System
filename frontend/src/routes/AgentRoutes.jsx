@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import { Tickets as AgentTickets } from "../pages/agent/Tickets";
-import AgentDashboard from "../Pages/agent/AgentDashboard";
+import AgentDashboard from "../pages/agent/AgentDashboard";
 import AgentNotification from "../pages/agent/AgentNotification";
 import AgentNotifTicketDetails from "../Pages/agent/AgentNotifTicketDetails";
 import AgentTicketdetails from "../pages/agent/AgentTicketdetails";
@@ -9,10 +9,11 @@ const AgentRoutes = () => {
   return (
     <Routes>
       <Route
-        path="/agent"
+        path="/agent/dashboard"
         element={
           <Layout>
-            <AgentDashboard />
+            {" "}
+            <AgentDashboard />{" "}
           </Layout>
         }
       />
@@ -20,43 +21,33 @@ const AgentRoutes = () => {
         path="/agent/notification"
         element={
           <Layout>
-            <AgentNotification />
+            {" "}
+            <AgentNotification />{" "}
           </Layout>
         }
       />
-
       <Route
-        path="/agent/Tickets"
+        path="/agent/notification/:id"
         element={
           <Layout>
+            <AgentNotifTicketDetails />{" "}
+          </Layout>
+        }
+      />
+      <Route
+        path="/agent/tickets"
+        element={
+          <Layout>
+            {" "}
             <AgentTickets />
           </Layout>
         }
       />
-
       <Route
-        path="/agent/tickets/notificationDetails/:id"
+        path="/agent/tickets/:id"
         element={
           <Layout>
-            <AgentNotifTicketDetails />
-          </Layout>
-        }
-      />
-
-      <Route
-        path="/agent/AgentTicketdetails"
-        element={
-          <Layout>
-            <AgentTicketdetails />
-          </Layout>
-        }
-      />
-
-      <Route
-        path="agent/AgentTicketdetails/:id"
-        element={
-          <Layout>
-            <AgentTicketdetails />
+            <TicketDetails />{" "}
           </Layout>
         }
       />

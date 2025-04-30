@@ -1,8 +1,13 @@
-import { useState,useEffect } from "react";
-import SignupImage from "../assets/signup.jpg";
+import { useState } from "react";
 import QtechLogo from "../assets/qtechlogo.png";
+import Hero1 from "../assets/hero-1.jpg";
+import Hero2 from "../assets/hero-2.jpg";
+import Hero3 from "../assets/hero-3.jpg";
 import { Link, useNavigate } from "react-router-dom";
-import { useStateContext } from "../contexts/ContextProvider";
+import { FiEye, FiEyeOff } from "react-icons/fi";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 export const Signin = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -10,76 +15,54 @@ export const Signin = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { user,login,token} = useStateContext();
+
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser && storedUser !== "undefined") {
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        const { role } = parsedUser;
-        switch (role) {
-          case "customer":
-            navigate("/customer");
-            break;
-          case "admin":
-            navigate("/admin");
-            break;
-          case "agent":
-            navigate("/agent");
-            break;
-          default:
-            navigate("/");
-        }
-      } catch (error) {
-        console.error("Failed to parse user data:", error);
-        localStorage.removeItem("user"); // Clean up if parsing fails
-      }
-    }
-  }, [navigate]);
-  
+  const carousel = {
+    dots: false,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    arrows: false,
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    try {
+      const response = await fetch("http://localhost:8000/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
 
-    if (!email || !password) {
-      setError("Please fill in all fields.");
-      return;
-    }
-      try{
-        const response = await fetch("http://localhost:8000/api/login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify({
-            email,
-            password,
-          })
-        });
-        if (!response.ok) {
-          throw new Error("Login failed");
-        }
-      // Optional: extract data if needed
+      if (!response.ok) {
+        throw new Error("Login failed");
+      }
+
       const data = await response.json();
       console.log("Login successful:", data);
 
-      const {  user,token } = data;
+      const { user } = data;
+      localStorage.setItem("user", JSON.stringify(user));
 
-      login(user,token);
-      
       const { role } = user;
       switch (role) {
         case "customer":
-          navigate("/customer");
+          navigate("/customer/dashboard");
           break;
         case "admin":
-          navigate("/admin");
+          navigate("/admin/dashboard");
           break;
         case "agent":
-          navigate("/agent");
+          navigate("/agent/dashboard");
           break;
         default:
           navigate("/dashboard");
@@ -88,105 +71,105 @@ export const Signin = () => {
       console.error("Login failed:", err);
       setError("Invalid email or password.");
     }
-  }
-  
-  
-  return (
-    <div className="min-h-screen flex text-gray-900 font-sans">
-      {/* Left Section */}
-      <div className="w-1/2 bg-[#0D0630] text-white flex flex-col justify-center items-start p-12 space-y-6">
-        <img src={QtechLogo} alt="Qtech Logo" className="h-12 mb-4" />
-        <h1 className="text-3xl font-bold">We simply position ourselves</h1>
-        <p className="text-sm text-gray-300">
-          as an ICT company for those who have no ICT department.
-        </p>
-        <img
-          src={SignupImage}
-          alt="Cloud Visual"
-          className="rounded-lg max-w-md mt-4"
-        />
-      </div>
+  };
 
-      {/* Right Section */}
-      <div className="w-1/2 bg-white p-12 rounded-r-xl flex flex-col justify-center">
-        <div className="flex justify-end mb-4">
-          <Link
-            to="/admin/dashboard"
-            className="text-sm font-medium text-black"
-          >
-            About Us
-          </Link>
+  return (
+    <div className="min-h-screen flex justify-center items-center bg-[#0D0630] p-5 md:p-12">
+      <div className="flex w-full max-w-7xl bg-white shadow rounded-lg overflow-hidden max-h-[650px] h-auto md:h-[550px]">
+        <div className="hidden lg:block w-1/2 bg-[#0D0630] pt-15 px-21 border border-white rounded-lg">
+          <img src={QtechLogo} alt="Qtech Logo" className="w-24 mb-4" />
+          <h1 className="text-3xl mt-10 text-white font-bold">
+            We simply position ourselves
+          </h1>
+          <p className="text-sm mt-4 text-gray-300">
+            as an ICT company for those who have no ICT department.
+          </p>
+          <div className="flex justify-center">
+            <div className="max-w-[409px] md:max-w-[408px] sm:max-w-[300px] rounded-lg w-full mt-10">
+              <Slider {...carousel}>
+                <div>
+                  <img src={Hero1} alt="Hero 1" className="w-full h-auto" />
+                </div>
+                <div>
+                  <img src={Hero2} alt="Hero 2" className="w-full h-auto" />
+                </div>
+                <div>
+                  <img src={Hero3} alt="Hero 3" className="w-full h-auto" />
+                </div>
+              </Slider>
+            </div>
+          </div>
         </div>
 
-        <h2 className="text-2xl font-bold text-blue-600 mb-2">Sign In</h2>
-        <p className="text-sm mb-4">
-          Don't have an account?{" "}
-          <Link
-            to="/Signup"
-            className="text-blue-600 font-medium hover:underline"
-          >
-            Signup
-          </Link>
-        </p>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Email */}
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value) }
-
-
-            className="w-full border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            autoFocus={true}
-            required
-          />
-
-          {/* Password */}
-          <div className="relative">
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full border rounded-md px-4 py-2 pr-16 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              required
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-2.5 text-sm text-blue-500"
-            >
-              {showPassword ? "Hide" : "Show"}
-            </button>
-          </div>
-
-          {/* Forgot Password on the Left Side */}
-          <div className="flex justify-start">
-            <Link
-              to="/forgot-password"
-              className="text-sm text-blue-600 hover:underline"
-            >
-              Forgot Password?
+        <div className="w-full lg:w-1/2 p-8 md:p-25 flex flex-col justify-center">
+          <div className="flex justify-end mb-6 md:mb-10">
+            <Link to="#" className="text-sm font-medium text-black">
+              About Us
             </Link>
           </div>
 
-          {/* Error Message */}
-          {error && <div className="text-red-500 text-sm">{error}</div>}
+          <h2 className="text-3xl font-bold text-blue-600 mb-6">Sign In</h2>
+          <p className="text-sm mb-6">
+            Don't have an account?{" "}
+            <Link
+              to="/Signup"
+              className="text-blue-600 font-bold hover:underline"
+            >
+              Sign up
+            </Link>
+          </p>
 
-          {/* Sign In Button */}
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white rounded-md py-2 font-semibold hover:bg-blue-700 transition"
-            disabled={loading}
-          >
-            {loading ? "Signing in..." : "Sign In"}
-          </button>
-        </form>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full border text-sm rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              required
+            />
+
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full border text-sm rounded-lg px-4 py-2 pr-16 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-5 top-2.5 text-lg text-gray-500"
+              >
+                {showPassword ? <FiEyeOff /> : <FiEye />}
+              </button>
+            </div>
+
+            {error && <div className="text-red-500 text-sm">{error}</div>}
+
+            <div className="flex justify-start">
+              <Link
+                to="/forgot-password"
+                className="text-sm font-bold text-blue-600 hover:underline"
+              >
+                Forgot Password?
+              </Link>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white rounded-lg py-2 font-semibold hover:bg-blue-700 transition"
+              disabled={loading}
+            >
+              {loading ? "Signing in..." : "Sign In"}
+            </button>
+          </form>
+        </div>
       </div>
     </div>
-  )
+  );
 };
 
 export default Signin;

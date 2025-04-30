@@ -1,7 +1,7 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import CustomerDashboard from "../Pages/customers/CustomerDasboard";
-import CustomerNotification from "../pages/customers/CustomerNotification";
+import CustomerNotification from "../Pages/customers/CustomerNotification";
 import CustomerNotifTicketDetails from "../Pages/customers/CustomerNotifTicketDetails";
 import Createticket from "../Pages/customers/Createticket";
 import Layout from "../components/Layout";
@@ -9,9 +9,19 @@ const CustomerRoutes = () => {
   return (
     <Routes>
       <Route
-        path="/customer"
+        path="/customer/dashboard"
         element={
           <Layout>
+            {" "}
+            <CustomerDashboard />
+          </Layout>
+        }
+      />
+      <Route
+        path="/customer/dashboard"
+        element={
+          <Layout>
+            {" "}
             <CustomerDashboard />
           </Layout>
         }
@@ -20,15 +30,16 @@ const CustomerRoutes = () => {
         path="/customer/notification"
         element={
           <Layout>
-            <CustomerNotification />
+            <CustomerNotification />{" "}
           </Layout>
         }
       />
       <Route
-        path="/customer/tickets/notificationDetails/:id"
+        path="/customer/notification/:id"
         element={
           <Layout>
-            <CustomerNotifTicketDetails />
+            {" "}
+            <CustomerNotifTicketDetails />{" "}
           </Layout>
         }
       />
@@ -36,10 +47,12 @@ const CustomerRoutes = () => {
         path="/customer/create-ticket"
         element={
           <Layout>
-            <Createticket />
+            <Createticket />{" "}
           </Layout>
         }
       />
+
+      <Route path="/termsAndConditions" element={<TermsAndConditions />} />
     </Routes>
   );
 };

@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // make sure useNavigate is imported here
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom"; // make sure useNavigate is imported here
 
 const ForgotPassword = () => {
-  const navigate = useNavigate(); // ✅ must be inside the component function
+  const navigate = useNavigate();
 
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Password reset link sent to:', email);
+    console.log("Password reset link sent to:", email);
     setSubmitted(true);
-    navigate("/otp"); // ✅ programmatic navigation after submit
+    navigate("/otp");
   };
 
   return (
@@ -24,11 +24,15 @@ const ForgotPassword = () => {
         {!submitted ? (
           <>
             <p className="text-sm text-gray-600 text-center mb-6">
-              Enter your email address and we'll send you an OTP to reset your password.
+              Enter your email address and we'll send you an OTP to reset your
+              password.
             </p>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Email
                 </label>
                 <input
@@ -49,7 +53,10 @@ const ForgotPassword = () => {
             </form>
           </>
         ) : (
-          <Link to="/otp" className="text-green-600 text-center block hover:underline">
+          <Link
+            to="/otp"
+            className="text-green-600 text-center block hover:underline"
+          >
             An OTP has been sent to your email. Click here to enter it.
           </Link>
         )}

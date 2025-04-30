@@ -1,20 +1,20 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import { Dashboard } from "../pages/admin/Dashboard";
-import Agent from "../pages/admin/Agent";
+import { Dashboard } from "../Pages/admin/Dashboard";
+import Agent from "../Pages/admin/Agent";
 import Notification from "../Pages/admin/Notification";
 import NotificationDetails from "../Pages/admin/NotificationDetails";
-import TicketDetails from "../pages/admin/TicketDetails";
-import { Tickets } from "../pages/admin/Tickets";
-import { Profile } from "../pages/admin/Profile";
-import { TicketCategories } from "../pages/admin/TicketCategories";
+import TicketDetails from "../Pages/admin/TicketDetails";
+import Tickets from "../pages/agent/Tickets";
+import { Profile } from "../Pages/admin/Profile";
+import { TicketCategories } from "../Pages/admin/TicketCategories";
 import Layout from "../components/Layout";
 
 const AdminRoutes = () => {
   return (
     <Routes>
       <Route
-        path="/admin"
+        path="/admin/dashboard"
         element={
           <Layout>
             <Dashboard />
@@ -38,45 +38,37 @@ const AdminRoutes = () => {
         }
       />
       <Route
-        path="/admin/NotificationDetails/:id"
+        path="/admin/notification/:id"
         element={
           <Layout>
             <NotificationDetails />
           </Layout>
         }
       />
-
       <Route
         path="/admin/ticketCategories"
         element={
           <Layout>
-            <TicketCategories />
+            {" "}
+            <TicketCategories />{" "}
           </Layout>
         }
       />
-
       <Route
         path="/admin/tickets"
         element={
           <Layout>
-            <Tickets />
+            {" "}
+            <Tickets />{" "}
           </Layout>
         }
       />
       <Route
-        path="admin/tickets/ticketDetails/:id"
+        path="/admin/tickets/:id"
         element={
           <Layout>
-            <TicketDetails />
-          </Layout>
-        }
-      />
-
-      <Route
-        path="/admin/TicketDetails"
-        element={
-          <Layout>
-            <TicketDetails />
+            {" "}
+            <TicketDetails />{" "}
           </Layout>
         }
       />
@@ -84,7 +76,8 @@ const AdminRoutes = () => {
         path="/admin/profile"
         element={
           <Layout>
-            <Profile />
+            {" "}
+            <Profile />{" "}
           </Layout>
         }
       />

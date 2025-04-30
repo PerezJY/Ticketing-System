@@ -10,9 +10,6 @@ import { FiUser } from "react-icons/fi";
 import { TbTicket } from "react-icons/tb";
 import { LuTicket } from "react-icons/lu";
 
-
-
-
 export const getLinks = (userRole) => {
   if (!userRole) return null;
   switch (userRole) {
@@ -33,7 +30,7 @@ export const getLinks = (userRole) => {
           {
             name: "Agents",
             icon: <MdOutlineSupportAgent />,
-            path: "/agent",
+            path: "/admin/agent",
           },
           {
             name: "Notification",
@@ -82,40 +79,34 @@ export const getLinks = (userRole) => {
           },
         ],
       };
-      case "agent":
-        return {
-          title: "Menu",
-          links: [
-            {
-              name: "Dashboard",
-              icon: <MdOutlineDashboard />,
-              path: "/agent/dashboard",
-            },
-        
-            {
-              name: "Notification",
-              icon: <MdNotificationsNone />,
-              path: "/agent/notification",
-            },
-            {
-              name: "Tickets",
-              icon: <TbTicket />,
-              path: "/agent/Tickets",
-            },
-            {
-              name: "Tickets Details",
-              icon: <LuTicket />,
-              path: "/agent/AgentTicketdetails",
-            },
-          ],
-          subLinks: [
-            {
-              name: "Logout",
-              icon: <MdOutlineLogout />,
-              path: null,
-            },
-          ],
-        };
-    }
-  };
-  
+    case "agent":
+      return {
+        title: "Menu",
+        links: [
+          {
+            name: "Dashboard",
+            icon: <MdOutlineDashboard />,
+            path: "/agent/dashboard",
+          },
+
+          {
+            name: "Notification",
+            icon: <MdNotificationsNone />,
+            path: "/agent/notification",
+          },
+          {
+            name: "Tickets",
+            icon: <TbTicket />,
+            path: "/agent/tickets",
+          },
+        ],
+        subLinks: [
+          {
+            name: "Logout",
+            icon: <MdOutlineLogout />,
+            path: null,
+          },
+        ],
+      };
+  }
+};

@@ -24,7 +24,7 @@ export const AgentDashboard = () => {
     >
       <div className="text-3xl font-bold text-[#1D4ED8]">Agent Dashboard</div>
       <div className="mt-5 p-4 border border-gray-100 shadow-sm rounded-xl bg-white">
-        <div className="mt-5 px-30">
+        <div className="mt-5 px-5 xl:px-30">
           <div className="flex flex-col md:flex-row gap-10 w-full justify-between">
             <div className="w-full md:w-1/2 max-w-sm flex flex-col gap-5">
               <div className="bg-[#08032B] rounded-lg text-white p-6 shadow w-full hover:bg-[#08032B]/90 cursor-pointer transition-all duration-300 flex flex-col items-center gap-4">

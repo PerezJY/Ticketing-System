@@ -4,12 +4,12 @@ import { useNavigate } from "react-router-dom";
 
 const AgentNotification = () => {
   const navigate = useNavigate();
-  const { activeMenu,user,login } = useStateContext();
-    
-    // Redirect if not logged in
-    if(!login && !user){
-      return <Navigate to ='/'/>
-    }
+  const { activeMenu, user, login } = useStateContext();
+
+  // Redirect if not logged in
+  if (!login && !user) {
+    return <Navigate to="/" />;
+  }
 
   const notifications = [
     {
@@ -45,7 +45,7 @@ const AgentNotification = () => {
   ];
 
   const handleRowClick = (notif) => {
-    navigate(`/agent/tickets/notificationDetails/${notif.ticketId}`, {
+    navigate(`/agent/notification/${notif.ticketId}`, {
       state: notif,
     });
   };
