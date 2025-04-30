@@ -116,11 +116,6 @@ export const Tickets = () => {
               >
                 {item.priority}
               </div>
-<<<<<<< HEAD
-              <div className="truncate">{item.agent_name}</div>
-              <div className="truncate">{item.created_at}</div>
-              <div className="truncate">
-=======
               <div className="hidden md:block truncate text-center">
                 {item.agent}
               </div>
@@ -128,7 +123,6 @@ export const Tickets = () => {
                 {item.date}
               </div>
               <div className="hidden md:block truncate text-center">
->>>>>>> 94f9d76e9ea82081afc7aaba4309768d562f19e5
                 <span className={`truncate ${statusColor(item.status)}`}>
                   {item.status}
                 </span>
