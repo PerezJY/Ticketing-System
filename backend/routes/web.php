@@ -7,3 +7,8 @@ Route::get('/', function () {
 });
 
 require __DIR__.'/api.php';
+Auth::routes(['verify' => true
+]);
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
