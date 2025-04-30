@@ -18,6 +18,10 @@ Route::post('/register', [RegisteredUserController::class, 'store']);
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 
 // Create ticket (requires Sanctum token)
+Route::get('/pos', [TicketController::class, 'pos']);
 Route::middleware(['auth:sanctum'])->post('/tickets', [TicketController::class, 'store']);
 Route::middleware(['auth:sanctum'])->get('/notif', [TicketController::class, 'index'])->name('tickets.index');
 Route::middleware(['auth:sanctum'])->get('/ticket/{id}', [TicketController::class, 'show']);
+
+Route::put('/agents/{id}', [RegisteredUserController::class, 'updateAgent']);
+Route::delete('/agents/{id}', [RegisteredUserController::class, 'deleteAgent']);

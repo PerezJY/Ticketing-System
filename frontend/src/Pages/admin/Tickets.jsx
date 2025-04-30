@@ -1,40 +1,49 @@
-import React from "react";
+
 import { useStateContext } from "../../contexts/ContextProvider";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { IoMdArrowBack } from "react-icons/io";
+import { useEffect } from "react";
+import { useState } from "react";
 
 export const Tickets = () => {
-  const { activeMenu, user, login } = useStateContext();
+  const { activeMenu, user, login,token } = useStateContext();
+   const [ticketData, setTicketData] = useState(null);
+   const { id } = useParams();
   const navigate = useNavigate();
 
   // Redirect if not logged in
-  if (!login && !user) {
-    return <navigate to="/" />;
+  if (!token && !user?.id) {
+    return <Navigate to="/" />; // Redirect if no token
   }
 
-  // dummy data
-  const data = [
-    {
-      id: 112381389173,
-      category: "POS for Retail and F&B",
-      priority: "High",
-      agent: "John Doe",
-      date: "March 1, 2025",
-      status: "Unresolved",
-      customer: "Customer Name",
-      description: "Payment terminal not processing transactions",
-    },
-    {
-      id: 2918392821,
-      date: "March 1, 2025",
-      category: "POS for Retail and F&B",
-      priority: "Primary",
-      agent: "John Doe",
-      status: "Resolved",
-      customer: "Pangalan ng nag - ticket",
-      description: "Payment terminal not processing transactions",
-    },
-  ];
+
+  useEffect(() => {
+
+    const fetchTickets = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/api/pos", {
+          headers: {
+            Authorization: `Bearer ${token}`, // Send token for authentication
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch tickets");
+        }
+
+        const data = await response.json(); // Parse the response data
+        console.log(data); // Log the response to verify its structure
+
+        // Set the fetched data to notifications state
+        setTicketData(data); // Assuming the response returns an array of tickets
+      } catch (error) {
+        console.error("Error fetching tickets:", error);
+      }
+    };
+   
+
+    fetchTickets();
+  }, [token]);
 
   const getPriorityColor = (priority) => {
     switch (priority) {
@@ -92,7 +101,7 @@ export const Tickets = () => {
         </div>
 
         <div className="space-y-2">
-          {data.map((item) => (
+          {ticketData?.map((item) => (
             <div
               key={item.id}
               onClick={() =>

@@ -8,6 +8,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class RegisteredUserController extends Controller
 {
@@ -30,8 +31,8 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'category' =>$request->category,
-            'role' =>$request->role,
+            'category' => $request->category,
+            'role' => $request->role,
         ]);
 
         // Fire registration event
@@ -47,8 +48,8 @@ class RegisteredUserController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
-                'role'=>$user->category,
-                'category'=>$user->category,
+                'role' => $user->role,
+                'category' => $user->category,
             ],
             'token' => $token,
         ], 201);
@@ -59,12 +60,46 @@ class RegisteredUserController extends Controller
      */
     public function getAllAgents(): JsonResponse
     {
-        // Retrieve all users with the 'agent' role
         $agents = User::where('role', 'agent')->get();
 
-        // Return the list of agents in a JSON response
         return response()->json([
             'agents' => $agents
+        ], 200);
+    }
+
+    /**
+     * Update an agent by ID.
+     */
+    public function updateAgent(Request $request, $id): JsonResponse
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255'],
+            'category' => ['required', 'string', 'max:255'],
+        ]);
+
+        DB::table('users')
+            ->where('id', $id)
+            ->update([
+                'name' => $request->name,
+                'email' => $request->email,
+                'category' => $request->category,
+            ]);
+
+        $updatedAgent = DB::table('users')->where('id', $id)->first();
+
+        return response()->json($updatedAgent, 200);
+    }
+
+    /**
+     * Delete an agent by ID.
+     */
+    public function deleteAgent($id): JsonResponse
+    {
+        DB::table('users')->where('id', $id)->delete();
+
+        return response()->json([
+            'message' => 'Agent deleted successfully'
         ], 200);
     }
 }

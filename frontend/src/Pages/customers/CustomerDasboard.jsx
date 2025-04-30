@@ -5,7 +5,7 @@ import image from '../../assets/hero-3.png'
 
 const CustomerDashboard = () => {
   const { activeMenu,user,login,logout } = useStateContext();
-  if(!user?.id){
+  if(!login){
       return <Navigate to ='/'/>
     }
 

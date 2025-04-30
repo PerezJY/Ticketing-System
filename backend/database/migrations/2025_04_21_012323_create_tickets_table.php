@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('customer_name');
             $table->string('agent_name')->default('Unassigned');
             $table->string('category'); 
-            $table->text('ticket_body'); 
+            $table->text('ticket_body');
             $table->string('image_path')->nullable();
             $table->string('status')->default('pending'); 
             $table->timestamps(); 

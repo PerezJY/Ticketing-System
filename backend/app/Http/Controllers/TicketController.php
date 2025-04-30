@@ -20,6 +20,15 @@ class TicketController extends Controller
     
     return response()->json($tickets);
     }
+    public function pos()
+    {
+        $tickets = Tickets::where('category', 'POS for Retail and F&B')->latest()->get();
+    
+    // Debugging: Log the tickets
+    Log::info('Tickets:', ['tickets' => $tickets]);
+    
+    return response()->json($tickets);
+    }
 
     public function show($id)
     {
