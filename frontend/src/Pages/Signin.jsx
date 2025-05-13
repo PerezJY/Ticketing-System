@@ -54,6 +54,7 @@ export const Signin = () => {
       localStorage.setItem("user", JSON.stringify(user));
 
       const { role } = user;
+      
       switch (role) {
         case "customer":
           navigate("/customer/dashboard");
