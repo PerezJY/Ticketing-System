@@ -16,31 +16,7 @@ export const Dashboard = () => {
     return <Navigate to="/" />;
   }
 
-<<<<<<< HEAD
 
-  const data = [
-    {
-      id: 112381389173,
-      category: "POS for Retail and F&B",
-      priority: "High",
-      agent: "John Doe",
-      date: "March 1, 2025",
-      status: "Unresolved",
-      customer: "Customer Name",
-      description: "Payment terminal not processing transactions",
-    },
-    {
-      id: 2918392821,
-      date: "March 1, 2025",
-      category: "POS for Retail and F&B",
-      priority: "Primary",
-      agent: "John Doe",
-      status: "Resolved",
-      customer: "Pangalan ng nag - ticket",
-      description: "Payment terminal not processing transactions",
-    },
-  ];
-=======
   useEffect(() => {
     const fetchTickets = async () => {
       try {
@@ -64,7 +40,7 @@ export const Dashboard = () => {
 
     fetchTickets();
   }, [token]);
->>>>>>> 3e1a739ad28ebe943fcdc3368bf667e57b8a3188
+
 
   const getPriorityColor = (priority) => {
     switch (priority) {

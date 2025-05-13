@@ -41,5 +41,10 @@ Route::middleware('auth:api')->group(function () {
     Route::get('tickets/{id}', [TicketController::class, 'show']);
     Route::put('assignAgent/{id}', [TicketController::class, 'assignAgent']);
     // plus any category routes if needed...
+
+        
 });
+Route::get('/email/verify', function () {
+    return view('auth.verify-email');
+})->middleware('auth')->name('verification.notice');
 
