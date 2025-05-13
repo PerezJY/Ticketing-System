@@ -16,12 +16,30 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 //  Register and Login
 Route::post('/register', [RegisteredUserController::class, 'store']);
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
+Route::middleware(['auth:sanctum'])->post('/addAgent', [RegisteredUserController::class, 'store']);
+Route::get('/agents', [RegisteredUserController::class, 'getAllAgents']);
 
 // Create ticket (requires Sanctum token)
 Route::get('/pos', [TicketController::class, 'pos']);
+Route::get('/iss', [TicketController::class, 'iss']);
+Route::get('/qsa', [TicketController::class, 'qsa']);
+Route::get('/ubs', [TicketController::class, 'ubs']);
+Route::get('/allTickets', [TicketController::class, 'allTickets']);
+Route::get('/payroll', [TicketController::class, 'payroll']);
+
 Route::middleware(['auth:sanctum'])->post('/tickets', [TicketController::class, 'store']);
 Route::middleware(['auth:sanctum'])->get('/notif', [TicketController::class, 'index'])->name('tickets.index');
 Route::middleware(['auth:sanctum'])->get('/ticket/{id}', [TicketController::class, 'show']);
 
 Route::put('/agents/{id}', [RegisteredUserController::class, 'updateAgent']);
 Route::delete('/agents/{id}', [RegisteredUserController::class, 'deleteAgent']);
+// In routes/api.php
+Route::put('/assignAgent/{id}', [TicketController::class, 'assignAgent']);
+
+Route::middleware('auth:api')->group(function () {
+    Route::get('tickets', [TicketController::class, 'allTickets']);
+    Route::get('tickets/{id}', [TicketController::class, 'show']);
+    Route::put('assignAgent/{id}', [TicketController::class, 'assignAgent']);
+    // plus any category routes if needed...
+});
+

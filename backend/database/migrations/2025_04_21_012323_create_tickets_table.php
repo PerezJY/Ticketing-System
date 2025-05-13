@@ -18,7 +18,8 @@ return new class extends Migration
             $table->string('email');
             $table->string('customer_name');
             $table->string('agent_name')->default('Unassigned');
-            $table->string('category'); 
+            $table->string('category');
+            $table->string('priority')->nullable();
             $table->text('ticket_body');
             $table->string('image_path')->nullable();
             $table->string('status')->default('pending'); 

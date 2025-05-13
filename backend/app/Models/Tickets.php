@@ -17,6 +17,7 @@ class Tickets extends Model
         'category',
         'ticket_body',
         'image_path',
+        'agent_name',
     ];
 
     // The attributes that should be hidden for serialization (for example, for sensitive data)
@@ -57,4 +58,6 @@ class Tickets extends Model
         $this->status = $status;
         return $this->save();
     }
+
+
 }

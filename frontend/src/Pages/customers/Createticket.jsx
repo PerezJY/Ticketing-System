@@ -1,19 +1,19 @@
-import React, { useRef, useState, useEffect} from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useStateContext } from "../../contexts/ContextProvider";
 import { Navigate } from "react-router-dom";
 
 const Createticket = () => {
-  const { activeMenu, user,login,token} = useStateContext();
+  const { activeMenu, user, login, token } = useStateContext();
   const fileRef = useRef();
   const imageRef = useRef();
   const [preview, setPreview] = useState(null);
   const [category, setCategory] = useState("");
   const [email, setEmail] = useState("");
-  const [ticketBody, setTicketBody] = useState(""); 
+  const [ticketBody, setTicketBody] = useState("");
 
   // Redirect if not logged in
-  if(!user?.id){
-    return <Navigate to ='/'/>
+  if (!login) {
+    return <Navigate to="/" />;
   }
 
   useEffect(() => {
@@ -31,28 +31,28 @@ const Createticket = () => {
       formData.append("ticket_body", ticketBody);
       formData.append("user_id", user.id);
       formData.append("customer_name", user.name);
-      
+
       if (fileRef.current && fileRef.current.files[0]) {
         formData.append("file", fileRef.current.files[0]); // Append the file
       }
-  
+
       const response = await fetch("http://localhost:8000/api/tickets", {
         method: "POST",
         headers: {
           Accept: "application/json",
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
           // Note: DO NOT set Content-Type manually when using FormData.
         },
         body: formData,
-        credentials: 'include',
+        credentials: "include",
       });
-  
+      console.log("User Token:", token);
       if (!response.ok) {
         throw new Error("Failed to create ticket.");
       }
-  
+
       alert("Ticket created successfully!");
-  
+
       // Clear form
       setCategory("");
       setTicketBody("");
@@ -63,7 +63,7 @@ const Createticket = () => {
       console.error(error);
     }
   };
-  
+
   const handleUploadfile = () => {
     if (fileRef.current) {
       fileRef.current.click();
@@ -71,12 +71,11 @@ const Createticket = () => {
   };
 
   const handleFileChange = (ev) => {
-    const file = ev.target.files[0];  
+    const file = ev.target.files[0];
     if (file) {
       const reader = new FileReader();
 
       reader.onloadend = () => {
-       
         setPreview(reader.result);
       };
       reader.readAsDataURL(file);
@@ -84,30 +83,34 @@ const Createticket = () => {
   };
 
   return (
-    <div
-    className={`mx-5 md:mx-5 lg:mx-5 transition-all duration-300 ${activeMenu ? "lg:pl-72" : "lg:pl-24"}`}
-    >
-      <main className="flex-1 p-10">
+    <div className={`mx-5 md:mx-5 lg:mx-5 transition-all duration-300 `}>
+      <main className="mt-10 max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold text-blue-600 mb-6">Create Ticket</h1>
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-lg font-semibold mb-1">Create Quick Ticket</h2>
-          <p className="text-gray-400 mb-4">Write and address new queries and issues</p>
+          <p className="text-gray-400 mb-4">
+            Write and address new queries and issues
+          </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="flex gap-4">
               <div className="flex-1">
-                <label className="block mb-1 text-sm font-medium text-gray-600">Email</label>
+                <label className="block mb-1 text-sm font-medium text-gray-600">
+                  Email
+                </label>
                 <input
                   type="email"
                   placeholder="Type Email"
                   value={email}
-                   onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="w-full border border-gray-300 p-2 rounded-md focus:outline-none"
                 />
               </div>
               <div className="flex-1">
-                <label className="block mb-1 text-sm font-medium text-gray-600">Categories</label>
-                 <select
+                <label className="block mb-1 text-sm font-medium text-gray-600">
+                  Categories
+                </label>
+                <select
                   className="w-full border border-gray-300 p-2 rounded-md focus:outline-none"
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
@@ -115,7 +118,9 @@ const Createticket = () => {
                   <option value="">Choose Type</option>
                   <option>QTech Inventory Support System</option>
                   <option>QTech Utility Billing System</option>
-                  <option>Philippine HR, Payroll and Time Keeping System</option>
+                  <option>
+                    Philippine HR, Payroll and Time Keeping System
+                  </option>
                   <option>POS for Retail and F&B</option>
                   <option>QSA (Quick and Single Accounting)</option>
                 </select>
@@ -123,18 +128,22 @@ const Createticket = () => {
             </div>
 
             <div>
-              <label className="block mb-1 text-sm font-semibold">Ticket Body</label>
+              <label className="block mb-1 text-sm font-semibold">
+                Ticket Body
+              </label>
               <textarea
                 placeholder="Type ticket issue here.."
                 className="w-full border border-gray-300 p-3 rounded-md focus:outline-none"
                 rows={5}
-                value={ticketBody}  
-                onChange={(e) => setTicketBody(e.target.value)} 
+                value={ticketBody}
+                onChange={(e) => setTicketBody(e.target.value)}
               ></textarea>
             </div>
 
             <div>
-              <label className="block mb-2 text-sm font-medium text-gray-600">Upload Photo</label>
+              <label className="block mb-2 text-sm font-medium text-gray-600">
+                Upload Photo
+              </label>
               <div
                 onClick={handleUploadfile}
                 className="border border-dashed border-gray-300 p-10 flex flex-col items-center justify-center rounded-md cursor-pointer hover:bg-gray-50 transition"
@@ -149,7 +158,12 @@ const Createticket = () => {
 
                 {/* Display Image Preview */}
                 {preview ? (
-                  <img ref={imageRef} alt="Preview" src={preview} className="max-w-xs max-h-60 object-contain mb-2" />
+                  <img
+                    ref={imageRef}
+                    alt="Preview"
+                    src={preview}
+                    className="max-w-xs max-h-60 object-contain mb-2"
+                  />
                 ) : (
                   <>
                     <svg

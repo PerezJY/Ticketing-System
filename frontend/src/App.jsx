@@ -9,39 +9,35 @@ import { Dashboard } from "./Pages/admin/Dashboard";
 import Agent from "./Pages/admin/Agent";
 import Notification from "./Pages/admin/Notification";
 import NotificationDetails from "./Pages/admin/NotificationDetails";
-import { TicketDetails } from "./Pages/admin/TicketDetails";
-import { Tickets } from "./pages/admin/Tickets";
+import TicketDetails from "./Pages/admin/TicketDetails";  // Import as default
+import { Tickets } from "./Pages/admin/Tickets";
 import { Profile } from "./Pages/admin/Profile";
 import { TicketCategories } from "./Pages/admin/TicketCategories";
 
-import Signin from "./pages/Signin";
-import Signup from "./pages/Signup";
-
-import AgentDashboard from "./pages/agent/AgentDashboard";
-import AgentTicketdetails from "./pages/agent/AgentTicketdetails";
-import AgentNotification from "./pages/agent/AgentNotification";
+import Signin from "./Pages/Signin";
+import Signup from "./Pages/Signup";
+import ForgotPassword from "./Pages/Forgotpass";
+import Otp from "./Pages/Otp";
+import About from "./Pages/About";
+import Communication from './Pages/agent/AgentCommunication';
+import AgentDashboard from "./Pages/agent/AgentDashboard";
+import AgentTicketdetails from "./Pages/agent/AgentTicketdetails";
+import AgentNotification from "./Pages/agent/AgentNotification";
 import AgentNotifTicketDetails from "./Pages/agent/AgentNotifTicketDetails";
-import { AgentTickets } from "./pages/agent/Tickets";
+import { AgentTickets } from "./Pages/agent/Tickets";
 import CustomerDashboard from "./Pages/customers/CustomerDasboard";
+import CustomerTicket from "./Pages/customers/CustomerTicket";
 import CustomerNotification from "./Pages/customers/CustomerNotification";
 import CustomerNotifTicketDetails from "./Pages/customers/CustomerNotifTicketDetails";
 import Createticket from "./Pages/customers/Createticket";
-import GuetsLayout from "./layout/GuestLayout";
-import DefaultLayout from "./layout/DefaultLayou";
-import Sidebar from "./components/Sidebar";
-import Navbar from "./components/Navbar";
+import GuestLayout from "./layout/GuestLayout";
+import DefaultLayout from "./layout/DefaultLayout";
+import AdminLayout from "./layout/AdminLayout";
+import AgentLayout from "./layout/AgentLayout";
+import Layout from "./layout/Layout";
+import UserLayout from "./layout/UserLayout";
 
-const Layout = ({ children }) => {
-  return (
-    <div className="flex">
-      <Sidebar />
-      <div className="flex-1 min-h-screen bg-gray-100">
-        <Navbar />
-        <div className="mt-20 md:mt-28 p-4">{children}</div>
-      </div>
-    </div>
-  );
-};
+import { Toaster } from "react-hot-toast";
 
 function AppRoutes() {
   const location = useLocation();
@@ -50,30 +46,79 @@ function AppRoutes() {
 
   return (
     <Routes>
-      <Route path="/" element={<GuetsLayout />}>
-        <Route path="/" element={<Signin />} />
+      <Route path="/" element={<GuestLayout />}>
+        <Route index element={<Signin />} />
         <Route path="/signup" element={<Signup />} />
       </Route>
-
-      <Route path="/" element={<DefaultLayout />}>
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/Otp" element={<Otp/>} />
+      <Route path="/about" element={<About/>} />
+      <Route path="/Communication" element={<Communication />} />
+      <Route path="/agent/Communication" element={<Communication />} />
+      <Route path="/customer" element={<DefaultLayout />}>
         <Route
-          path="/admin/dashboard"
+          path="dashboard"
+          element={
+            <UserLayout>
+              <CustomerDashboard />
+            </UserLayout>
+          }
+        />
+        <Route
+          path="tickets"
+          element={
+            <UserLayout>
+              <CustomerTicket />
+            </UserLayout>
+          }
+        />
+        <Route
+          path="notification"
+          element={
+            <UserLayout>
+              <CustomerNotification />
+            </UserLayout>
+          }
+        />
+        <Route
+          path="tickets/notificationDetails/:id"
+          element={
+            <UserLayout>
+              <CustomerNotifTicketDetails />
+            </UserLayout>
+          }
+        />
+        <Route
+          path="create-ticket"
+          element={
+            <UserLayout>
+              <Createticket />
+            </UserLayout>
+          }
+        />
+      </Route>
+
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route
+          path="dashboard"
           element={
             <Layout>
               <Dashboard />
             </Layout>
           }
         />
+
         <Route
-          path="/admin/agent"
+          path="agent"
           element={
             <Layout>
+              <Toaster position="top-right" reverseOrder={false} />
               <Agent />
             </Layout>
           }
         />
         <Route
-          path="/admin/notification"
+          path="notification"
           element={
             <Layout>
               <Notification />
@@ -81,7 +126,7 @@ function AppRoutes() {
           }
         />
         <Route
-          path="/admin/notification/:id"
+          path="notification/:id"
           element={
             <Layout>
               <NotificationDetails />
@@ -89,126 +134,77 @@ function AppRoutes() {
           }
         />
         <Route
-          path="/admin/ticketCategories"
+          path="ticketCategories"
           element={
             <Layout>
-              {" "}
-              <TicketCategories />{" "}
+              <TicketCategories />
             </Layout>
           }
         />
         <Route
-          path="/admin/tickets"
+          path="tickets"
           element={
             <Layout>
-              {" "}
-              <Tickets />{" "}
+              <Tickets />
             </Layout>
           }
         />
         <Route
-          path="/admin/tickets/:id"
+          path="details/:id"
           element={
             <Layout>
-              {" "}
-              <TicketDetails />{" "}
+              <TicketDetails />
             </Layout>
           }
         />
         <Route
-          path="/admin/profile"
+          path="profile"
           element={
             <Layout>
-              {" "}
-              <Profile />{" "}
+              <Profile />
             </Layout>
           }
         />
+      </Route>
 
+      <Route path="/agent" element={<AgentLayout />}>
         <Route
-          path="/agent/dashboard"
+          path="dashboard"
           element={
             <Layout>
-              {" "}
-              <AgentDashboard />{" "}
+              <AgentDashboard />
             </Layout>
           }
         />
         <Route
-          path="/agent/notification"
+          path="notification"
           element={
             <Layout>
-              {" "}
-              <AgentNotification />{" "}
+              <AgentNotification />
             </Layout>
           }
         />
         <Route
-          path="/agent/notification/:id"
+          path="notification/:id"
           element={
             <Layout>
-              <AgentNotifTicketDetails />{" "}
+              <AgentNotifTicketDetails />
             </Layout>
           }
         />
         <Route
-          path="/agent/tickets"
+          path="tickets"
           element={
             <Layout>
-              {" "}
               <AgentTickets />
             </Layout>
           }
         />
         <Route
-          path="/agent/tickets/:id"
+          path="tickets/:id"
           element={
             <Layout>
-              <AgentTicketdetails />{" "}
-            </Layout>
-          }
-        />
-
-        <Route
-          path="/customer"
-          element={
-            <Layout>
-              {" "}
-              <CustomerDashboard />
-            </Layout>
-          }
-        />
-        <Route
-          path="/customer/dashboard"
-          element={
-            <Layout>
-              {" "}
-              <CustomerDashboard />
-            </Layout>
-          }
-        />
-        <Route
-          path="/customer/notification"
-          element={
-            <Layout>
-              <CustomerNotification />{" "}
-            </Layout>
-          }
-        />
-        <Route
-          path="/customer/notification/:id"
-          element={
-            <Layout>
-              {" "}
-              <CustomerNotifTicketDetails />{" "}
-            </Layout>
-          }
-        />
-        <Route
-          path="/customer/create-ticket"
-          element={
-            <Layout>
-              <Createticket />{" "}
+              <AgentTicketdetails />
             </Layout>
           }
         />

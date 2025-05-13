@@ -1,20 +1,13 @@
 import React from "react";
 import { useStateContext } from "../../contexts/ContextProvider";
-import { FiUser } from "react-icons/fi";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Navigate } from "react-router-dom";
 
 const profileSchema = yup.object().shape({
-  firstName: yup.string().required("First name is required."),
-  lastName: yup.string().required("Last name is required."),
+  fullName: yup.string().required("Full name is required."),
   email: yup.string().email("Invalid email").required("Email is required."),
-  location: yup.string().required("Location is required."),
-  contactNumber: yup
-    .string()
-    .matches(/^\d{10,15}$/, "Enter a valid contact number.")
-    .required("Contact number is required."),
 });
 
 const passwordSchema = yup.object().shape({
@@ -30,13 +23,12 @@ const passwordSchema = yup.object().shape({
 });
 
 export const Profile = () => {
-  const { activeMenu,user,login } = useStateContext();
+  const { activeMenu, user, login } = useStateContext();
   const [showPassword, setShowPassword] = React.useState(false);
 
-  
   // Redirect if not logged in
-  if(!login && !user){
-    return <Navigate to ='/'/>
+  if (!login && !user) {
+    return <Navigate to="/" />;
   }
   const {
     register,
@@ -71,50 +63,24 @@ ${activeMenu ? "lg:pl-75" : "lg:pl-25"}
         Manage and protect your account
       </div>
       <div className="mt-10 grid grid-cols-12 gap-8 ">
-        <div className="flex justify-center items-center col-span-12 md:col-span-4 p-4 rounded-xl shadow ">
-          <div className="block">
-            <div className="text-9xl">
-              <FiUser />
-            </div>
-            <div className="mt-3 text-md text-center font-bold">
-              [Full Name]
-            </div>
-            <div className="mt-3 text-sm text-gray-600 text-center">
-              +63 987 6543 210
-            </div>
-          </div>
-        </div>
+        <div className="flex justify-center items-center col-span-12 md:col-span-4 p-4 rounded-xl shadow "></div>
         <div className="col-span-12 md:col-span-8 p-4 rounded-xl shadow">
           <div className="p-6 text-md font-semibold">
             Edit Profile Details
             <div className="mt-3 border-t border-gray-300" />
           </div>
           <form className="p-6 space-y-6" onSubmit={handleSubmit(onSubmit)}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="">
               <div>
                 <input
                   type="text"
-                  placeholder="First Name"
-                  {...register("firstName")}
+                  placeholder="Full Name"
+                  {...register("fullName")}
                   className="w-full p-2 border rounded-lg text-sm px-4"
                 />
-                {errors.firstName && (
+                {errors.fullName && (
                   <p className="mt-1.5 text-red-500 text-sm">
-                    {errors.firstName.message}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <input
-                  type="text"
-                  placeholder="Last Name"
-                  {...register("lastName")}
-                  className="w-full p-2 border rounded-lg text-sm px-4"
-                />
-                {errors.lastName && (
-                  <p className="mt-1.5 text-red-500 text-sm">
-                    {errors.lastName.message}
+                    {errors.fullName.message}
                   </p>
                 )}
               </div>
@@ -133,35 +99,7 @@ ${activeMenu ? "lg:pl-75" : "lg:pl-25"}
               )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <input
-                  type="text"
-                  placeholder="Contact Number"
-                  {...register("contactNumber")}
-                  className="w-full p-2 border rounded-lg text-sm px-4"
-                />
-                {errors.contactNumber && (
-                  <p className="mt-1.5 text-red-500 text-sm">
-                    {errors.contactNumber.message}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <input
-                  type="text"
-                  placeholder="Location"
-                  {...register("location")}
-                  className="w-full p-2 border rounded-lg text-sm px-4"
-                />
-                {errors.location && (
-                  <p className="mt-1.5 text-red-500 text-sm">
-                    {errors.location.message}
-                  </p>
-                )}
-              </div>
-            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
             <div className="flex justify-end">
               <button
                 type="submit"
@@ -181,10 +119,6 @@ ${activeMenu ? "lg:pl-75" : "lg:pl-25"}
             </div>
             <div className="mt-3 px-4 text-sm">Name: [Administrator]</div>
             <div className="mt-3 px-4 text-sm">Email: [admin@gmail.com]</div>
-            <div className="mt-3 px-4 text-sm">Location: [secret]</div>
-            <div className="mt-3 px-4 text-sm">
-              Contact Number: [09876543210]
-            </div>
           </div>
         </div>
         <div className="col-span-12 md:col-span-8 p-4 rounded-xl shadow">

@@ -32,53 +32,9 @@ export const getLinks = (userRole) => {
             icon: <MdOutlineSupportAgent />,
             path: "/admin/agent",
           },
-          {
-            name: "Notification",
-            icon: <MdNotificationsNone />,
-            path: "/admin/notification",
-          },
-        ],
-        subLinks: [
-          {
-            name: "Profile",
-            icon: <FiUser />,
-            path: "/admin/profile",
-          },
-          {
-            name: "Logout",
-            icon: <MdOutlineLogout />,
-            path: null,
-          },
         ],
       };
-    case "customer":
-      return {
-        title: "Menu",
-        links: [
-          {
-            name: "Dashboard",
-            icon: <MdOutlineDashboard />,
-            path: "/customer/dashboard",
-          },
-          {
-            name: "Tickets",
-            icon: <TbTicket />,
-            path: "/customer/create-ticket",
-          },
-          {
-            name: "Notification",
-            icon: <MdNotificationsNone />,
-            path: "/customer/notification",
-          },
-        ],
-        subLinks: [
-          {
-            name: "Logout",
-            icon: <MdOutlineLogout />,
-            path: null,
-          },
-        ],
-      };
+
     case "agent":
       return {
         title: "Menu",
@@ -88,23 +44,10 @@ export const getLinks = (userRole) => {
             icon: <MdOutlineDashboard />,
             path: "/agent/dashboard",
           },
-
-          {
-            name: "Notification",
-            icon: <MdNotificationsNone />,
-            path: "/agent/notification",
-          },
           {
             name: "Tickets",
             icon: <TbTicket />,
             path: "/agent/tickets",
-          },
-        ],
-        subLinks: [
-          {
-            name: "Logout",
-            icon: <MdOutlineLogout />,
-            path: null,
           },
         ],
       };

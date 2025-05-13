@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import QtechLogo from "../assets/qtechlogo.png";
 import Hero1 from "../assets/hero-1.jpg";
 import Hero2 from "../assets/hero-2.jpg";
@@ -8,15 +8,46 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { useStateContext } from "../contexts/ContextProvider";
 
 export const Signin = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const { user, login } = useStateContext();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
   const navigate = useNavigate();
+  const [pageLoading, pageSetLoading] = useState(false);
+
+  const handleNavigation = (event) => {
+    event.preventDefault();
+    pageSetLoading(true);
+
+    setTimeout(() => {
+      navigate("/Signup");
+      pageSetLoading(false);
+    }, 700);
+  };
+
+  useEffect(() => {
+    if (login && user) {
+      const { role } = user;
+      switch (role) {
+        case "customer":
+          navigate("/customer/dashboard");
+          break;
+        case "admin":
+          navigate("/admin/dashboard");
+          break;
+        case "agent":
+          navigate("/agent/dashboard");
+          break;
+        default:
+          navigate("/");
+      }
+    }
+  }, [login, user, navigate]);
 
   const carousel = {
     dots: false,
@@ -27,9 +58,10 @@ export const Signin = () => {
     autoplay: true,
     arrows: false,
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Set loading to true when submitting
+
     try {
       const response = await fetch("http://localhost:8000/api/login", {
         method: "POST",
@@ -44,14 +76,15 @@ export const Signin = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Login failed");
+        throw new Error("Invalid credentials or server error.");
       }
 
       const data = await response.json();
       console.log("Login successful:", data);
 
-      const { user } = data;
-      localStorage.setItem("user", JSON.stringify(user));
+      const { user, token } = data; // Make sure you are receiving the token
+      localStorage.setItem("user", JSON.stringify(user)); // Save user details
+      localStorage.setItem("token", token); // Store the token in localStorage for later use
 
       const { role } = user;
       
@@ -66,11 +99,13 @@ export const Signin = () => {
           navigate("/agent/dashboard");
           break;
         default:
-          navigate("/dashboard");
+          navigate("/");
       }
     } catch (err) {
       console.error("Login failed:", err);
       setError("Invalid email or password.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -104,7 +139,7 @@ export const Signin = () => {
 
         <div className="w-full lg:w-1/2 p-8 md:p-25 flex flex-col justify-center">
           <div className="flex justify-end mb-6 md:mb-10">
-            <Link to="#" className="text-sm font-medium text-black">
+            <Link to="/about" className="text-sm font-medium text-black">
               About Us
             </Link>
           </div>
@@ -112,8 +147,14 @@ export const Signin = () => {
           <h2 className="text-3xl font-bold text-blue-600 mb-6">Sign In</h2>
           <p className="text-sm mb-6">
             Don't have an account?{" "}
+            {pageLoading && (
+              <div className="spinner-overlay">
+                <div className="loading-line"></div>
+              </div>
+            )}
             <Link
               to="/Signup"
+              onClick={handleNavigation}
               className="text-blue-600 font-bold hover:underline"
             >
               Sign up
@@ -144,7 +185,11 @@ export const Signin = () => {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-5 top-2.5 text-lg text-gray-500"
               >
-                {showPassword ? <FiEyeOff /> : <FiEye />}
+                {showPassword ? (
+                  <FiEyeOff className="cursor-pointer" />
+                ) : (
+                  <FiEye className="cursor-pointer" />
+                )}
               </button>
             </div>
 
@@ -158,13 +203,42 @@ export const Signin = () => {
                 Forgot Password?
               </Link>
             </div>
-
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white rounded-lg py-2 font-semibold hover:bg-blue-700 transition"
+              className="w-full bg-blue-600 text-white rounded-lg py-2 font-semibold hover:bg-blue-700 transition flex items-center justify-center gap-2"
               disabled={loading}
             >
-              {loading ? "Signing in..." : "Sign In"}
+              {loading ? (
+                <>
+                  Signing in...
+                  <span>
+                    {" "}
+                    <div className=" text-center text-gray-500 flex items-center justify-center gap-2">
+                      <svg
+                        className="animate-spin h-5 w-5 text-white"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v8H4z"
+                        />
+                      </svg>
+                    </div>
+                  </span>
+                </>
+              ) : (
+                "Sign In"
+              )}
             </button>
           </form>
         </div>

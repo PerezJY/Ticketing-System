@@ -8,7 +8,6 @@ const StateContext = createContext({
   screenSize: undefined,
   setScreenSize: () => {},
 });
-
 export const ContextProvider = ({ children }) => {
   const [activeMenu, setActiveMenu] = useState(true);
   const [screenSize, setScreenSize] = useState(undefined);
@@ -27,10 +26,15 @@ export const ContextProvider = ({ children }) => {
     }
   });
 
+  const [currentCategory, setCurrentCategory] = useState(null);
   const [token, setToken] = useState(() => {
     try {
       const storedToken = localStorage.getItem("token");
-      if (storedToken === "undefined" || storedToken === "null" || !storedToken) {
+      if (
+        storedToken === "undefined" ||
+        storedToken === "null" ||
+        !storedToken
+      ) {
         return null;
       }
       return storedToken;
@@ -65,6 +69,8 @@ export const ContextProvider = ({ children }) => {
         token,
         login,
         logout,
+        currentCategory,
+        setCurrentCategory,
       }}
     >
       {children}
