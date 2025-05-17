@@ -117,83 +117,106 @@ const NotificationDetails = () => {
       return <div className="text-center text-red-500 mt-10">Error: {error}</div>;
     }
   
-    return (
-      <div className={`mx-5 md:mx-5 lg:mx-5 transition-all duration-300 ${
+  {/* CHANGES */}
+  return (
+    <div
+      className={`mx-5 md:mx-5 lg:mx-5 transition-all duration-300 ${
         activeMenu ? "lg:pl-75" : "lg:pl-25"
-      }`}>
-        <div className="flex gap-4">
-          <IoMdArrowBack
-            className="text-4xl cursor-pointer"
-            onClick={() => navigate("/admin/notification")}
-          />
-          <div className="text-3xl font-bold text-[#1D4ED8]">Notification Details</div>
+      }`}
+    > 
+      <div className="flex gap-4 items-center">
+        <IoMdArrowBack
+          className="text-4xl cursor-pointer"
+          onClick={() => navigate("/agent/notification")}
+        />
+        <div className="text-3xl font-bold text-[#1D4ED8]">
+          Ticket ID: {ticketData.ticketNumber}
         </div>
+      </div>
   
-        <div className="mt-10 border border-gray-100 shadow-sm rounded-xl bg-white">
-          <div className="px-4 grid grid-cols-12">
-            {/* Left column */}
-            <div className="col-span-12 md:col-span-5 p-8 text-sm">
-              <div className="text-gray-600 font-semibold">Ticket ID</div>
-              <div className="text-black font-bold mt-1">{ticketData.id}</div>
-  
-              <div className="text-gray-600 font-semibold mt-6">Customer Name</div>
-              <div className="text-black font-bold mt-1">{ticketData.customer_name}</div>
+      <div className="bg-white rounded-md p-6 min-h-[500px] mt-6 text-sm text-black">
+        {/* First Section */}
+        <div className="grid grid-cols-12 gap-y-6">
+          {/* Left */}
+          <div className="col-span-12 md:col-span-6 px-4">
+            <div className="mb-4">
+              <div className="text-gray-600 font-semibold">Status:</div>
+              <div className="mt-1 font-bold">{ticketData.status}</div>
             </div>
-  
-            {/* Right column */}
-            <div className="col-span-12 md:col-span-7 p-8 text-sm">
-              <div className="text-gray-600 font-semibold">Created Date</div>
-              <div className="text-black font-bold mt-1">{ticketData.created_at}</div>
-  
-              <div className="text-gray-600 font-semibold mt-6">Status</div>
-              <div className="text-black font-bold mt-1">{ticketData.status}</div>
+            <div className="mb-4">
+              <div className="text-gray-600 font-semibold">Priority:</div>
+              <div className="mt-1 font-bold">{ticketData.priority}</div>
             </div>
-  
-            {/* Description & timeline */}
-            <div className="col-span-12 md:col-span-5 px-8 mt-5 text-sm">
-              <div className="text-gray-600 font-semibold">Description</div>
-              <div className="text-black font-bold mt-1">{ticketData.ticket_body}</div>
-  
-              <div className="text-gray-600 font-semibold mt-5">Timeline</div>
-              <div className="text-black font-bold mt-1">Initial Response</div>
-              <div className="text-black font-bold">March 2, 2025 | 9:02 AM</div>
-              <div className="text-black font-bold mt-4">Technical Assigned</div>
-              <div className="text-black font-bold">March 2, 2025 | 9:15 AM</div>
+            <div className="mb-4">
+              <div className="text-gray-600 font-semibold">Category:</div>
+              <div className="mt-1 font-bold">{ticketData.department}</div>
             </div>
-  
-            {/* Assigned Agent & assignment UI */}
-            <div className="col-span-12 md:col-span-7 px-8 mt-5 text-sm">
-              <div className="text-gray-600 font-semibold">Assigned Agent</div>
-              <div className="text-black font-bold mt-1">{selectedAgentName}</div>
-  
-              <div className="mt-5 flex items-center space-x-3">
-                <select
-                  value={assignedAgent}
-                  onChange={(e) => setAssignedAgent(e.target.value)}
-                  className="p-2 border-2 border-black rounded-md focus:outline-none"
-                >
-                  <option value="">Select Agent</option>
-                  {agents.map(a => (
-                    <option key={a.id} value={a.id}>{a.name}</option>
-                  ))}
-                </select>
-                <button
-                  onClick={handleAssign}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition"
-                >
-                  Assign Agent
-                </button>
-              </div>
+            <div className="mb-4">
+              <div className="text-gray-600 font-semibold">Create Date:</div>
+              <div className="mt-1 font-bold">{ticketData.date}</div>
             </div>
+          </div>
   
-            {/* Attachments */}
-            <div className="col-span-12 md:col-span-7 px-8 mt-5 text-sm">
-              <div className="text-gray-600 font-semibold">Attachments</div>
-              <div className="text-black font-bold mt-1">{ticketData.image_path}</div>
+          {/* Right */}
+          <div className="col-span-12 md:col-span-6 px-4">
+            <div className="mb-4">
+              <div className="text-gray-600 font-semibold">User Name:</div>
+              <div className="mt-1 font-bold">{ticketData.customer}</div>
+            </div>
+            <div className="mb-4">
+              <div className="text-gray-600 font-semibold">Email:</div>
+              <div className="mt-1 font-bold">{ticketData.email}</div>
             </div>
           </div>
         </div>
+  
+        <div className="border-t border-gray-300 my-6" />
+  
+        {/* Second Section */}
+        <div className="grid grid-cols-12 gap-y-6">
+          <div className="col-span-12 md:col-span-6 px-4">
+            <div className="mb-4">
+              <div className="text-gray-600 font-semibold">Assigned To:</div>
+              <div className="mt-1 font-bold">{ticketData.agent}</div>
+            </div>
+            <div className="mb-4">
+              <div className="text-gray-600 font-semibold">Due Date:</div>
+              <div className="mt-1 font-bold">{ticketData.dueDate}</div>
+            </div>
+          </div>
+  
+          <div className="col-span-12 md:col-span-6 px-4">
+            <div className="mb-4">
+              <div className="text-gray-600 font-semibold">Help Topic (Category):</div>
+              <div className="mt-1 font-bold">{ticketData.helpTopic}</div>
+            </div>
+            <div className="mb-4">
+              <div className="text-gray-600 font-semibold">Last Response:</div>
+              <div className="mt-1 font-bold">{ticketData.lastResponse}</div>
+            </div>
+          </div>
+        </div>
+  
+        {/* Concern Message */}
+        <div className="border-t border-gray-300 my-6" />
+        <div className="px-4">
+          <div className="text-gray-600 font-semibold mb-2">Message:</div>
+          <div className="font-medium text-[15px] leading-relaxed">
+            {ticketData.lastMessage}
+          </div>
+        </div>
+  
+        {/* Attachment Section */}
+        <div className="px-4 mt-6">
+          <div className="text-gray-600 font-semibold mb-2">Attachment:</div>
+          {/* This should map over any attachments if there are multiple */}
+          <div className="text-blue-600 underline cursor-pointer">
+            {ticketData.attachment || "No attachment available"}
+          </div>
+        </div>
       </div>
-    );
+    </div>
+  );
+  
   };
 export default NotificationDetails;
