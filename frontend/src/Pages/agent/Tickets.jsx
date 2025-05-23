@@ -11,6 +11,29 @@ export const AgentTickets = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+    const data = [
+      {
+        id: 112381389173,
+        category: "POS for Retail and F&B",
+        priority: "High",
+        agent: "Agent1",
+        date: "March 1, 2025",
+        status: "Unresolved",
+        customer: "Customer Name",
+        description: "Payment terminal not processing transactions",
+      },
+      {
+        id: 2918392821,
+        date: "March 1, 2025",
+        category: "POS for Retail and F&B",
+        priority: "Primary",
+        agent: "Agent2",
+        status: "Resolved",
+        customer: "Customer 2",
+        description: "Payment terminal not processing transactions",
+      },
+    ];
+
   // Redirect if not logged in
   useEffect(() => {
   if (!login && !user) {
@@ -44,23 +67,23 @@ if (!login && !user) {
     }
   };
 
-  fetchTickets();
-}, [login, user, token]);
+    fetchTickets();
+  }, [login, user, token]);
 
-  const getPriorityColor = (priority) => {
-    switch (priority) {
-      case "High":
-        return "text-red-500 font-semibold";
-      case "Primary":
-        return "text-green-500 font-semibold";
-      case "Medium":
-        return "text-yellow-500 font-semibold";
-      case "Low":
-        return "text-gray-500 font-semibold";
-      default:
-        return "text-black";
-    }
-  };
+    const getPriorityColor = (priority) => {
+      switch (priority) {
+        case "High":
+          return "text-red-500 font-semibold";
+        case "Primary":
+          return "text-green-500 font-semibold";
+        case "Medium":
+          return "text-yellow-500 font-semibold";
+        case "Low":
+          return "text-gray-500 font-semibold";
+        default:
+          return "text-black";
+      }
+    };
 
   const statusColor = (status) => {
     switch (status) {
