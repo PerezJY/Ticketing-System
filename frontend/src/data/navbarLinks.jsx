@@ -1,5 +1,7 @@
 import { MdNotificationsNone, MdOutlineLogout } from "react-icons/md";
 import { FiUser } from "react-icons/fi";
+import { FaFileContract } from "react-icons/fa6";
+import { FaInfoCircle } from "react-icons/fa";
 
 export const getNavbarLinks = (userRole) => {
   if (!userRole) return null;
@@ -19,6 +21,13 @@ export const getNavbarLinks = (userRole) => {
             path: "/admin/profile",
           },
 
+          /* DI PA TO WORKING*/
+          {
+            name: "Terms and Conditions",
+            icon: <FaFileContract />,
+            path: "/TermsAndCondition",
+          },
+
           {
             name: "Logout",
             icon: <MdOutlineLogout />,
@@ -35,6 +44,11 @@ export const getNavbarLinks = (userRole) => {
           count: 4,
         },
         profileMenu: [
+          {
+            name: "Terms and Conditions",
+            icon: <FaFileContract />,
+            path: "/TermsandCondition",
+          },
           {
             name: "Logout",
             icon: <MdOutlineLogout />,
@@ -61,6 +75,16 @@ export const getNavbarLinks = (userRole) => {
           count: 2,
         },
         profileMenu: [
+          {
+            name: "About Us",
+            icon: <FaInfoCircle />,
+            path: "/About",
+          },
+          {
+            name: "Terms and Conditions",
+            icon: <FaFileContract />,
+            path: "/terms-and-conditions",
+          },
           {
             name: "Logout",
             icon: <MdOutlineLogout />,

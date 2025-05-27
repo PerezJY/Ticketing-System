@@ -44,8 +44,6 @@ Route::delete('/agents/{id}', [RegisteredUserController::class, 'deleteAgent']);
 Route::put('/assignAgent/{id}', [TicketController::class, 'assignAgent']);
 
 Route::middleware('auth:api')->group(function () {
-    Route::get('tickets', [TicketController::class, 'allTickets']);
-    Route::get('tickets/{id}', [TicketController::class, 'show']);
     Route::put('assignAgent/{id}', [TicketController::class, 'assignAgent']);
     Route::middleware(['auth:sanctum'])->put('/tickets/{id}/status', [TicketController::class, 'updateStatus']);
     Route::middleware(['auth:sanctum'])->put('/tickets/{id}/priority', [TicketController::class, 'updatePriority']);

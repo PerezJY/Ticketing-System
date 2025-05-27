@@ -67,7 +67,7 @@ class TicketController extends Controller
             'email'       => 'required|email',
             'category'    => 'required|string|max:255',
             'ticket_body' => 'required|string',
-            'image'       => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image_path'       => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $ticket = new Tickets();
@@ -77,8 +77,8 @@ class TicketController extends Controller
         $ticket->category      = $validated['category'];
         $ticket->ticket_body   = $validated['ticket_body'];
 
-        if ($request->hasFile('image')) {
-            $ticket->image_path = $request->file('image')->store('uploads', 'public');
+        if ($request->hasFile('image_path')) {
+            $ticket->image_path = $request->file('image_path')->store('uploads', 'public');
         }
 
         $ticket->save();

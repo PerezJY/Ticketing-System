@@ -11,9 +11,11 @@ import Agent from "./Pages/admin/Agent";
 import Notification from "./Pages/admin/Notification";
 import NotificationDetails from "./Pages/admin/NotificationDetails";
 import TicketDetails from "./Pages/admin/TicketDetails";
-import { Tickets } from "./Pages/admin/Tickets";
+import {InventorySupport} from "./Pages/admin/InventorySupport";
 import { Profile } from "./Pages/admin/Profile";
 import { TicketCategories } from "./Pages/admin/TicketCategories";
+import { PosRetail } from "./Pages/admin/PosRetail";
+
 
 import Signin from "./Pages/Signin";
 import Signup from "./Pages/Signup";
@@ -43,6 +45,9 @@ import Layout from "./layout/Layout";
 import UserLayout from "./layout/UserLayout";
 
 import { Toaster } from "react-hot-toast";
+import { HRPayrollSystem } from "./Pages/admin/HRPayrollSystem";
+import { UtilityBilling } from "./Pages/admin/UtilityBilling";
+import { AccountingSystem } from "./Pages/admin/AccountingSystem";
 
 function AppRoutes() {
   const location = useLocation();
@@ -78,9 +83,13 @@ function AppRoutes() {
         <Route path="notification" element={<Layout><Notification /></Layout>} />
         <Route path="notification/:id" element={<Layout><NotificationDetails /></Layout>} />
         <Route path="ticketCategories" element={<Layout><TicketCategories /></Layout>} />
-        <Route path="tickets" element={<Layout><Tickets /></Layout>} />
         <Route path="details/:id" element={<Layout><TicketDetails /></Layout>} />
         <Route path="profile" element={<Layout><Profile /></Layout>} />
+        <Route path="ticketCategories/PosRetail" element={<Layout><PosRetail/></Layout>} />
+        <Route path="ticketCategories/InventorySupport" element={<Layout><InventorySupport/></Layout>} />
+        <Route path="ticketCategories/HRPayrollSystem" element={<Layout><HRPayrollSystem/></Layout>} />
+        <Route path="ticketCategories/UtilityBilling" element={<Layout><UtilityBilling/></Layout>} />
+        <Route path="ticketCategories/AccountingSystem" element={<Layout><AccountingSystem/></Layout>} />
       </Route>
 
       {/* Agent Routes */}

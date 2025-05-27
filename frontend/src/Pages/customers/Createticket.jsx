@@ -10,6 +10,7 @@ const Createticket = () => {
   const [category, setCategory] = useState("");
   const [email, setEmail] = useState("");
   const [ticketBody, setTicketBody] = useState("");
+  const [image_path, setImage_path] = useState("");
 
   // Redirect if not logged in
   if (!login) {
@@ -32,8 +33,9 @@ const Createticket = () => {
       formData.append("user_id", user.id);
       formData.append("customer_name", user.name);
 
+
       if (fileRef.current && fileRef.current.files[0]) {
-        formData.append("file", fileRef.current.files[0]); // Append the file
+        formData.append("image_path", fileRef.current.files[0]); // Append the file
       }
 
       const response = await fetch("http://localhost:8000/api/tickets", {
@@ -79,6 +81,7 @@ const Createticket = () => {
         setPreview(reader.result);
       };
       reader.readAsDataURL(file);
+      setImage_path(file.name); 
     }
   };
 

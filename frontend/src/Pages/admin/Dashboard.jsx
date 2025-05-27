@@ -13,7 +13,7 @@ export const Dashboard = () => {
   const [tickets, setTickets] = useState([]);
 
   // Redirect if not logged in
-  if (!login && !user) {
+  if (!login && !user?.id) {
     return <Navigate to="/" />;
   }
 
@@ -68,7 +68,7 @@ export const Dashboard = () => {
   };
 
   return (
-    <Layout>
+    
       <div
         className={`
 mx-5 md:mx-5 mt-10 md:mt-3 lg:mx-5
@@ -210,6 +210,6 @@ ${activeMenu ? "lg:pl-75" : "lg:pl-25"}
           </div>
         </div>
       </div>
-    </Layout>
+    
   );
 };

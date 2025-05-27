@@ -52,7 +52,7 @@ export const Profile = () => {
   };
 
   return (
-    <Layout>
+    
       <div
         className={`
 mx-5 md:mx-5 lg:mx-5
@@ -197,6 +197,6 @@ ${activeMenu ? "lg:pl-75" : "lg:pl-25"}
           </div>
         </div>
       </div>
-    </Layout>
+    
   );
 };

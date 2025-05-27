@@ -97,12 +97,16 @@ export const Signup = () => {
         return;
       }
 
-      setSuccess("Signup successful! Redirecting...");
+      setSuccess("Registration successful! Please check your email for login credentials.");
       // Store the token if needed
       if (data.token) {
         localStorage.setItem('token', data.token);
       }
-      navigate("/");
+      
+      // Redirect after a short delay to allow user to read the success message
+      setTimeout(() => {
+        navigate("/");
+      }, 3000);
     } catch (err) {
       console.error("Signup failed:", err);
       setError("An unexpected error occurred.");
@@ -225,24 +229,25 @@ export const Signup = () => {
             </div>
 
             {/* Terms & Conditions */}
-            <div className="flex items-center text-sm">
-              <input 
-                type="checkbox" 
-                className="mr-2" 
-                checked={isTermsAccepted}
-                onChange={(e) => setIsTermsAccepted(e.target.checked)}
-              />
-              <label>
-                I have read & accept the{" "}
-                <a
-                  href="#"
-                  onClick={openModal}
-                  className="text-blue-600 font-bold hover:underline"
-                >
-                  Terms and Conditions
-                </a>
-              </label>
-            </div>
+           <div className="flex items-start space-x-2">
+            <input
+              type="checkbox"
+              id="terms"
+              checked={isTermsAccepted}
+              onChange={(e) => setIsTermsAccepted(e.target.checked)}
+              className="mt-1"
+            />
+            <label htmlFor="terms" className="text-sm">
+              I accept the{" "}
+              <button
+                className="text-blue-600 hover:underline"
+                onClick={openModal}
+              >
+                Terms and Conditions
+              </button>
+            </label>
+          </div>
+
             {error && <div className="text-red-500 text-sm">{error}</div>}
             {success && <div className="text-green-500 text-sm">{success}</div>}
 

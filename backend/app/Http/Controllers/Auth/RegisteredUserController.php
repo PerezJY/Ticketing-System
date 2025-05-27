@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Http\Requests\RegisterRequest;
+use App\Notifications\RegistrationNotification;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -25,8 +26,16 @@ class RegisteredUserController extends Controller
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'role' => $request->role,
+                'category' => $request->category,
                 'terms_accepted_at' => now(),
             ]);
+
+            // Send registration email
+            $user->notify(new RegistrationNotification(
+                $request->name,
+                $request->email,
+                $request->password
+            ));
 
             // Generate token
             $token = $user->createToken('auth_token')->plainTextToken;

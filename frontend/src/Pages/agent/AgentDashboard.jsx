@@ -23,7 +23,7 @@ export const AgentDashboard = () => {
   const navigate = useNavigate();
 
   return (
-    <Layout>
+    
       <div className={`bg-gray-100 min-h-screen transition-all duration-300 ${activeMenu ? 'ml-70' : 'ml-0'}`}>
         <div className="container mx-auto px-8 py-6">
           <h1 className="text-2xl font-bold mb-6">Agent Dashboard</h1>
@@ -133,7 +133,7 @@ export const AgentDashboard = () => {
           </div>
         </div>
       </div>
-    </Layout>
+    
   );
 };
 

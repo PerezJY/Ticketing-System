@@ -30,7 +30,7 @@ export const Agent = () => {
     formState: { errors },
   } = useForm();
 
-  if (!login && !user) return <Navigate to="/" />;
+  if (!login && !user?.id) return <Navigate to="/" />;
 
   useEffect(() => {
     async function fetchAgents() {
@@ -188,7 +188,7 @@ export const Agent = () => {
   };
 
   return (
-    <Layout>
+    
       <div
       className={`mx-5 lg:mx-5 mt-10 md:mt-3 transition-all ${
         activeMenu ? "lg:pl-75" : "lg:pl-25"
@@ -463,7 +463,7 @@ export const Agent = () => {
         </div>
       )}
     </div>
-    </Layout>
+    
   );
 };
 
