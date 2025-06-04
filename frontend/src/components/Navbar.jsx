@@ -5,6 +5,8 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import useUser from "../hooks/use-user";
 import { MdMenuOpen } from "react-icons/md";
+import { FaEdit } from "react-icons/fa";
+import qtechLogo from "../assets/qtech-logo.png"; // Make sure this file exists in this path
 
 const formatTimeAgo = (timestamp) => {
   const now = new Date();
@@ -52,14 +54,17 @@ const Navbar = () => {
       try {
         const url =
           user?.role === "admin"
-            ? "http://localhost:8000/api/allTickets"  // Admin sees all tickets
-            : "http://localhost:8000/api/tickets";    // User tickets endpoint fixed here
+            ? "http://localhost:8000/api/allTickets" // Admin sees all tickets
+            : "http://localhost:8000/api/tickets"; // User tickets endpoint fixed here
 
         const res = await fetch(url, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        if (!res.ok) throw new Error(`Failed to fetch notifications: ${res.status} ${res.statusText}`);
+        if (!res.ok)
+          throw new Error(
+            `Failed to fetch notifications: ${res.status} ${res.statusText}`
+          );
 
         const data = await res.json();
         setNotifications(Array.isArray(data) ? data : []);
@@ -105,7 +110,9 @@ const Navbar = () => {
         return;
       }
 
-      navigate(`/${user.role}/notification/${notif.id}`, { state: { notification: notif } });
+      navigate(`/${user.role}/notification/${notif.id}`, {
+        state: { notification: notif },
+      });
       setNotifDropdown(false);
     },
     [navigate, user?.role]
@@ -189,7 +196,9 @@ const Navbar = () => {
               to={link.path}
               onClick={() => setMobileMenuOpen(false)}
               className={({ isActive }) =>
-                isActive ? "text-blue-500 font-semibold" : "text-white font-semibold"
+                isActive
+                  ? "text-blue-500 font-semibold"
+                  : "text-white font-semibold"
               }
             >
               {link.name}
@@ -244,90 +253,95 @@ const Navbar = () => {
         )}
       </button>
 
-      {/* Notification dropdown */}
+      {/* Notification dropdown and desktop navbar */}
       {notifDropdown && (
-      {/* Desktop Navbar */}
-      {user?.role === "customer" && (
-        <div className="flex-1 items-center mx-3.5 xl:mx-0 hidden lg:flex">
-          <Link to="/customer/home">
-            <img
-              src={qtechLogo}
-              alt="Qtech Logo"
-              className="h-14 cursor-pointer"
-            />
-          </Link>
-        </div>
-      )}
+        <>
+          {user?.role === "customer" && (
+            <div className="flex-1 items-center mx-3.5 xl:mx-0 hidden lg:flex">
+              <Link to="/customer/home">
+                <img
+                  src={qtechLogo}
+                  alt="Qtech Logo"
+                  className="h-14 cursor-pointer"
+                />
+              </Link>
+            </div>
+          )}
 
-      <div className="items-center justify-center flex-4 hidden xl:flex">
-        {navbarLinks?.navLinks && (
-          <div className="flex items-center gap-10">
-            {navbarLinks.navLinks.map((link) => (
-              <NavLink
-                key={link.name}
-                to={link.path}
-                className={({ isActive }) =>
-                  `text-md transition ${
-                    isActive
-                      ? "text-blue-600 font-semibold"
-                      : "text-gray-800 hover:text-blue-600"
-                  }`
-                }
-              >
-                {link.name}
-              </NavLink>
-            ))}
-            {user?.role === "customer" && (
-              <div>
-                <Link to="/customer/create-ticket">
-                  <button className="bg-blue-500 hover:bg-blue-600 text-white py-1.5 px-4 rounded-md flex items-center justify-center w-full md:w-auto cursor-pointer">
-                    <FaEdit className="mr-2" /> Create Ticket
-                  </button>
-                </Link>
+          <div className="items-center justify-center flex-4 hidden xl:flex">
+            {navbarLinks?.navLinks && (
+              <div className="flex items-center gap-10">
+                {navbarLinks.navLinks.map((link) => (
+                  <NavLink
+                    key={link.name}
+                    to={link.path}
+                    className={({ isActive }) =>
+                      `text-md transition ${
+                        isActive
+                          ? "text-blue-600 font-semibold"
+                          : "text-gray-800 hover:text-blue-600"
+                      }`
+                    }
+                  >
+                    {link.name}
+                  </NavLink>
+                ))}
+
+                {user?.role === "customer" && (
+                  <div>
+                    <Link to="/customer/create-ticket">
+                      <button className="bg-blue-500 hover:bg-blue-600 text-white py-1.5 px-4 rounded-md flex items-center justify-center w-full md:w-auto cursor-pointer">
+                        <FaEdit className="mr-2" /> Create Ticket
+                      </button>
+                    </Link>
+                  </div>
+                )}
               </div>
             )}
           </div>
-        )}
-      </div>
 
-      {navbarLinks && (
-        <div
-          id="notif-dropdown"
-          role="menu"
-          aria-label="Notifications"
-          className="absolute right-4 top-14 w-80 max-h-96 overflow-auto bg-white border rounded shadow-lg z-50"
-        >
-          {notifLoading && <div className="p-4">Loading...</div>}
-          {notifError && <div className="p-4 text-red-600">{notifError}</div>}
-          {!notifLoading && !notifError && notifications.length === 0 && (
-            <div className="p-4 text-gray-500">No notifications</div>
+          {navbarLinks && (
+            <div
+              id="notif-dropdown"
+              role="menu"
+              aria-label="Notifications"
+              className="absolute right-4 top-14 w-80 max-h-96 overflow-auto bg-white border rounded shadow-lg z-50"
+            >
+              {notifLoading && <div className="p-4">Loading...</div>}
+              {notifError && <div className="p-4 text-red-600">{notifError}</div>}
+              {!notifLoading && !notifError && notifications.length === 0 && (
+                <div className="p-4 text-gray-500">No notifications</div>
+              )}
+              <ul>
+                {notifications.map((notif) => (
+                  <li
+                    key={notif.id}
+                    className="p-3 hover:bg-gray-100 cursor-pointer border-b last:border-b-0"
+                    onClick={() => handleNotifClick(notif)}
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        handleNotifClick(notif);
+                      }
+                    }}
+                  >
+                    <div className="font-semibold">
+                      {notif.customer_name
+                        ? `${notif.customer_name} posted a ticket`
+                        : "New notification"}
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {formatTimeAgo(notif.created_at)}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
-          <ul>
-            {notifications.map((notif) => (
-              <li
-                key={notif.id}
-                className="p-3 hover:bg-gray-100 cursor-pointer border-b last:border-b-0"
-                onClick={() => handleNotifClick(notif)}
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    handleNotifClick(notif);
-                  }
-                }}
-              >
-                <div className="font-semibold">
-                  {notif.customer_name
-                    ? `${notif.customer_name} posted a ticket`
-                    : "New notification"}
-                </div>
-                <div className="text-xs text-gray-500">{formatTimeAgo(notif.created_at)}</div>
-              </li>
-            ))}
-          </ul>
-        </div>
+        </>
       )}
 
-      {/* Profile dropdown toggle */}
+      {/* Profile dropdown */}
       <button
         id="profile-button"
         aria-haspopup="true"
@@ -335,48 +349,31 @@ const Navbar = () => {
         aria-controls="profile-dropdown"
         onClick={toggleProfileDropdown}
         className="ml-4"
-        title="Profile"
+        title="Profile options"
       >
-        {/* Simple user icon */}
-        <svg
-          className="w-7 h-7 text-gray-700"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M5.121 17.804A7 7 0 0112 15a7 7 0 016.879 2.804M12 12a5 5 0 100-10 5 5 0 000 10z"
-          />
-        </svg>
+        <img
+          src={user?.avatar || "/default-avatar.png"}
+          alt="User avatar"
+          className="w-8 h-8 rounded-full object-cover"
+        />
       </button>
 
-      {/* Profile dropdown */}
       {profileDropdown && (
         <div
           id="profile-dropdown"
           role="menu"
           aria-label="Profile options"
-          className="absolute right-4 top-14 w-48 bg-white border rounded shadow-md z-50"
+          className="absolute right-4 top-14 w-44 bg-white border rounded shadow-lg z-50"
         >
           <Link
             to={`/${user?.role}/profile`}
             className="block px-4 py-2 hover:bg-gray-100"
-            role="menuitem"
-            onClick={() => setProfileDropdown(false)}
           >
             Profile
           </Link>
           <button
-            onClick={() => {
-              setProfileDropdown(false);
-              handleLogout();
-            }}
+            onClick={handleLogout}
             className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-            role="menuitem"
           >
             Logout
           </button>
