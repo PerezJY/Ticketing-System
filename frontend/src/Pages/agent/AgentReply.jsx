@@ -36,7 +36,7 @@ if (!login && !user?.id) {
           if (!res.ok) throw new Error(data.message || "Failed to fetch ticket");
           setTicketData(data);
           setStatus(data.status || "Open");
-          setImageUrl(data.image_url);
+          setImageUrl(data.image_path);
         } catch (err) {
           console.error(err);
           setError(err.message);

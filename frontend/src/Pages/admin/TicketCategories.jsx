@@ -100,36 +100,53 @@ export const TicketCategories = () => {
 
   return (
     <Layout>
-    <div
-      className={`mx-5 mt-10 md:mt-3 transition-all duration-300 ${
-        activeMenu ? "lg:pl-75" : "lg:pl-25"
-      }`}
-    >
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold text-[#1D4ED8]">Categories</h2>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {categories.map((item, index) => (
-          <div
-            key={index}
-            role="button"
-            tabIndex={0}
-            onClick={() => handleCategoryClick(item.category)}
-            onKeyPress={(e) => {
-              if (e.key === "Enter") handleCategoryClick(item.category);
-            }}
-            className="bg-white rounded-2xl shadow-md border border-gray-200 p-6 flex items-center gap-4 min-w-[250px] cursor-pointer hover:shadow-lg transition duration-200"
-          >
-            <div className="rounded-xl bg-blue-100 p-3">{item.icon}</div>
-            <div>
-              <div className="text-black font-semibold">{item.title}</div>
-              <div className="text-2xl font-extrabold text-black">1000</div>
-            </div>
+     <div className={`transition-all ${activeMenu ? "lg:pl-72" : "lg:pl-23"}`}>
+        <div className="container px-8 py-6">
+          <div className="text-3xl font-bold text-[#1D4ED8] mb-1">
+            Ticket Categories
           </div>
-        ))}
+          <div className="text-sm font-semibold text-gray-500">
+            Manage tickets by category
+          </div>
+
+       <div className="mt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {categories.map((item, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-2xl shadow-lg cursor-pointer "
+                onClick={() => handleCategoryClick(item.category)}
+              >
+                <div className={`py-5 ${item.bgColor} rounded-t-2xl px-5`}>
+                  <div className="flex flex-col items-center">
+                    <div
+                      className={`flex items-center justify-center mb-4 rounded-full  text-2xl`}
+                    >
+                      {item.icon}
+                    </div>
+                  </div>
+                </div>
+                <div className="px-9 py-8">
+                  <h3 className="text-2xl text-gray-800 font-bold mb-3">
+                    {item.title}
+                  </h3>
+                  <h3 className="text-sm text-gray-600 font-medium  mb-2">
+                    {item.description}
+                  </h3>
+                  <div className="mt-5 flex justify-start">
+                    <div
+               className="text-blue-600 font-semibold hover:underline text-md lg:text-md flex items-center cursor-pointer group transition-all duration-400"
+                      onClick={() => handleCategoryClick(item.category)}
+                    >
+                      <span>View Tickets</span>
+                      <FaArrowRight className="ml-2 transform -rotate-45 transition duration-400 group-hover:rotate-0" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
-    </div>
     </Layout>
   );
 };

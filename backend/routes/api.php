@@ -76,3 +76,7 @@ Route::get('/tickets/open-count', [TicketController::class, 'countOpenTickets'])
 Route::get('/tickets/pending-count', [TicketController::class, 'countPendingTickets']);
 Route::get('/tickets/resolved-count', [TicketController::class, 'countResolvedTickets']);
 Route::get('/tickets/closed-count', [TicketController::class, 'countClosedTickets']);
+//get user data using id
+Route::get('/users/{id}', [RegisteredUserController::class, 'getUserById']);
+Route::put('/users/{id}/update-name-email', [RegisteredUserController::class, 'updateUserNameAndEmail']);
+Route::middleware('auth:sanctum')->put('/update-password/{id}', [RegisteredUserController::class, 'updatePassword']);

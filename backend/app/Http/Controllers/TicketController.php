@@ -232,6 +232,7 @@ class TicketController extends Controller
                 'customer_name'=> $ticket->customer_name,
                 'created_at'   => $ticket->created_at->toDateTimeString(),
                 'agent_name' => $ticket->agent_name,
+                'image_path' => $ticket->image_path,
                 'priority'=> $ticket->priority,
                 'ticket_body'=> $ticket->ticket_body
             ];

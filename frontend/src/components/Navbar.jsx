@@ -246,6 +246,51 @@ const Navbar = () => {
 
       {/* Notification dropdown */}
       {notifDropdown && (
+      {/* Desktop Navbar */}
+      {user?.role === "customer" && (
+        <div className="flex-1 items-center mx-3.5 xl:mx-0 hidden lg:flex">
+          <Link to="/customer/home">
+            <img
+              src={qtechLogo}
+              alt="Qtech Logo"
+              className="h-14 cursor-pointer"
+            />
+          </Link>
+        </div>
+      )}
+
+      <div className="items-center justify-center flex-4 hidden xl:flex">
+        {navbarLinks?.navLinks && (
+          <div className="flex items-center gap-10">
+            {navbarLinks.navLinks.map((link) => (
+              <NavLink
+                key={link.name}
+                to={link.path}
+                className={({ isActive }) =>
+                  `text-md transition ${
+                    isActive
+                      ? "text-blue-600 font-semibold"
+                      : "text-gray-800 hover:text-blue-600"
+                  }`
+                }
+              >
+                {link.name}
+              </NavLink>
+            ))}
+            {user?.role === "customer" && (
+              <div>
+                <Link to="/customer/create-ticket">
+                  <button className="bg-blue-500 hover:bg-blue-600 text-white py-1.5 px-4 rounded-md flex items-center justify-center w-full md:w-auto cursor-pointer">
+                    <FaEdit className="mr-2" /> Create Ticket
+                  </button>
+                </Link>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {navbarLinks && (
         <div
           id="notif-dropdown"
           role="menu"

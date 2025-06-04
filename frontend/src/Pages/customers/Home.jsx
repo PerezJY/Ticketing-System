@@ -77,7 +77,7 @@ const Home = () => {
                   </button>
                 </Link>
                 <Link
-                  to="/customer/create-ticket"
+                  to="/contact-us"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   <button className="bg-white hover:scale-105 text-gray-800 text-lg py-3 px-5 rounded-sm flex items-center justify-center cursor-pointer group transition-all duration-400">

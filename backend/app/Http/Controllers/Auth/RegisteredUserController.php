@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class RegisteredUserController extends Controller
 {
@@ -105,6 +106,66 @@ class RegisteredUserController extends Controller
         ]);
     }
 
+        public function getUserById(int $id): JsonResponse
+    {
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found',
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'User retrieved successfully',
+            'user' => $user,
+        ]);
+    }
+
+        public function updateUserNameAndEmail(Request $request, int $id): JsonResponse
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'lowercase', 'max:255'],
+        ]);
+
+        $user = User::findOrFail($id);
+
+        $user->update([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+        ]);
+
+        return response()->json([
+            'message' => 'User updated successfully',
+            'user' => $user->only(['id', 'name', 'email']),
+        ]);
+    }
+
+    public function updatePassword(Request $request, int $id): JsonResponse
+{
+    $request->validate([
+        'current_password' => ['required'],
+        'new_password' => ['required', 'string', 'min:8', 'confirmed'], 
+    ]);
+
+    $user = User::findOrFail($id);
+
+    // Verify the current password
+    if (!Hash::check($request->current_password, $user->password)) {
+        throw ValidationException::withMessages([
+            'current_password' => ['The current password is incorrect.'],
+        ]);
+    }
+
+    // Update the password
+    $user->password = Hash::make($request->new_password);
+    $user->save();
+
+    return response()->json([
+        'message' => 'Password updated successfully.',
+    ]);
+}
     /**
      * Delete an agent by ID.
      */
