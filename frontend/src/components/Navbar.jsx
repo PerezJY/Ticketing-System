@@ -6,7 +6,7 @@ import Swal from "sweetalert2";
 import useUser from "../hooks/use-user";
 import { MdMenuOpen } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
-import qtechLogo from "../assets/qtech-logo.png"; // Make sure this file exists in this path
+
 
 const formatTimeAgo = (timestamp) => {
   const now = new Date();
