@@ -14,11 +14,6 @@ const Createticket = () => {
   const [image_path, setImage_path] = useState("");
   const navigate = useNavigate();
 
-  // Redirect if not logged in
-  if (!user) {
-    return <Navigate to="/signin" />;
-  }
-
   useEffect(() => {
     if (user?.email) {
       setEmail(user.email);
@@ -49,6 +44,25 @@ const Createticket = () => {
         body: formData,
         credentials: "include",
       });
+      const result = await response.json();
+      const res = await fetch("http://localhost:8000/api/notification", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          
+        },
+         body: JSON.stringify({
+          ticket_id:result.ticket.id,
+          name:result.ticket.customer_name,
+          title: "New Ticket",
+          message: "A new ticket has been submitted.",
+        }),
+        credentials: "include",
+      });
+
+
       console.log("User Token:", token);
       if (!response.ok) {
         throw new Error("Failed to create ticket.");
@@ -86,6 +100,11 @@ const Createticket = () => {
     }
   };
 
+  // Redirect if not logged in
+    if (!login && !user?.id) {
+      return <Navigate to="/" />;
+    }
+  
   return (
     <div className={`mx-5 md:mx-5 lg:mx-5 transition-all duration-300 `}>
       <main className=" max-w-7xl mx-auto">

@@ -74,6 +74,7 @@ export const Agent = () => {
         });
         if (!res.ok) throw new Error("Failed to fetch agents");
         const data = await res.json();
+        
         if (data && Array.isArray(data.agents)) {
           setAllAgents(data.agents);
         } else {

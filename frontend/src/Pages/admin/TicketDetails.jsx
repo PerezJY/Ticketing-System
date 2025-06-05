@@ -93,6 +93,40 @@ const TicketDetails = () => {
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Assignment failed");
+      const result  = await fetch("http://localhost:8000/api/agentnotification", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          
+        },
+         body: JSON.stringify({
+          ticket_id:id,
+          user_ID: ticketData.agent_id,
+          name:"Admin",
+          title: "New Assign Ticket",
+          message: "A new ticket has been submitted.",
+        }),
+        credentials: "include",
+      });
+
+      const res1  = await fetch("http://localhost:8000/api/customernotification", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          
+        },
+         body: JSON.stringify({
+          ticket_id:id,
+          customer_id: ticketData.user_id,
+          title: "Ticket Update",
+          message: "A ticket has a agent.",
+        }),
+        credentials: "include",
+      });
 
       setTicketData((prev) => ({
         ...prev,
@@ -124,6 +158,7 @@ const TicketDetails = () => {
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "priority update failed");
+      
 
       setTicketData((prev) => ({ ...prev, priority }));
       alert("Priority updated successfully");

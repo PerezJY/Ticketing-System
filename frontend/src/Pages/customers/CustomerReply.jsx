@@ -50,26 +50,31 @@ export const CustomerReply = () => {
     return null;
   }
 
-const fetchMessages = async () => {
-  try {
-    const lastMessage = messages[messages.length - 1];
-    const lastTimestamp = lastMessage?.created_at;
+useEffect(() => {
+  const fetchMessages = async () => {
+    setLoading(true); // Optional: you can set a separate loading state for messages
+    try {
+      const res = await fetch(`http://localhost:8000/api/messages/${id}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    const res = await fetch(`http://localhost:8000/api/messages/${id}${lastTimestamp ? `?after=${lastTimestamp}` : ''}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to fetch messages");
 
-    const data = await res.json();
-    if (data?.length > 0) {
-      setMessages(prev => [...prev, ...data]);
+      setMessages(data); 
+    } catch (err) {
+      console.error("Error fetching messages", err);
+      setError("Failed to fetch messages.");
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    console.error("Error fetching messages", err);
-  }
-};
+  };
+
+  fetchMessages();
+}, [id, token]);
 
 
  const sendMessage = async () => {
@@ -104,6 +109,25 @@ const fetchMessages = async () => {
     }
 
     const data = await res.json();
+    const result  = await fetch("http://localhost:8000/api/agentnotification", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          
+        },
+         body: JSON.stringify({
+          ticket_id:id,
+          user_ID: ticketData.agent_id,
+          name:"Admin",
+          title: "New message",
+          message: data.content,
+        }),
+        credentials: "include",
+      });
+
+
     setMessages([...messages, data]);
     setContent("");
   } catch (err) {
@@ -112,13 +136,7 @@ const fetchMessages = async () => {
   }
 };
 
- useEffect(() => {
-  const interval = setInterval(() => {
-    fetchMessages();
-  }, 5000);
 
-  return () => clearInterval(interval);
-}, [id, token]);
 
   if (loading) {
     return (
@@ -177,22 +195,30 @@ const fetchMessages = async () => {
                     <div className="space-y-4 max-h-64 overflow-y-auto">
                        
     
-                    {(messages || []).map((msg, idx) => (
-                      <div key={idx} className="flex items-start gap-3">
-                         
-                        <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-                          <span className="text-lg">{msg.sender_id === user.id ? "👤" : msg.sender_name || "👩‍💻"}</span>
-                        </div>
-                        <div>
-                          <div className="font-semibold">{msg.sender_id === user.id ? "You" : msg.sender_name || "Agent"}</div>
-                          <div className="text-gray-600 text-sm">{msg.created_at ? new Date(msg.created_at).toLocaleString() : ""}</div>
-                          <div className="text-gray-800 mt-1">
-                            {msg.content}
-                          </div>
-                        </div>
+                   {(messages || []).map((msg, idx) => {
+                const isOwnMessage = msg.sender_id === user.id;
+                const senderName = isOwnMessage ? "You" : msg.sender_name || "Agent";
+                const avatarIcon = isOwnMessage ? "👩‍💻" : msg.sender_name?.charAt(0).toUpperCase() || "👤";
+                const formattedTime = msg.created_at ? new Date(msg.created_at).toLocaleString() : "";
+
+                return (
+                  <div
+                    key={idx}
+                    className={`flex items-start gap-3 mb-4 ${isOwnMessage ? "justify-end" : "justify-start"}`}
+                  >
+                    {!isOwnMessage && (
+                      <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold">
+                        <span>{avatarIcon}</span>
                       </div>
-                      
-                    ))}
+                    )}
+                    <div className={`max-w-xs p-3 rounded-lg ${isOwnMessage ? "bg-blue-100 text-right" : "bg-gray-100"}`}>
+                      <div className="font-semibold text-sm">{senderName}</div>
+                      <div className="text-gray-500 text-xs">{formattedTime}</div>
+                      <div className="text-gray-800 mt-1 break-words">{msg.content}</div>
+                    </div>
+                  </div>
+                );
+              })}
                     </div>
                 
                     {/* Message Input */}

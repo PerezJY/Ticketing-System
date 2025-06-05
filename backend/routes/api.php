@@ -1,14 +1,19 @@
 <?php
 
+use App\Http\Controllers\AdminNotificationController;
 use App\Http\Controllers\AgentController;
+use App\Http\Controllers\AgentNotificationController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\CustomerNotificationController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\MessageController;
-use App\Http\Controllers\NotificationController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
+
+//  Authenticated user info (requires Sanctum token)
+Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
+    return $request->user();
+});
 
 // Public routes
 Route::post('/register', [RegisteredUserController::class, 'store']);

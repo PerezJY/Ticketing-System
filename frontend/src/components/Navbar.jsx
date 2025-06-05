@@ -1,12 +1,13 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useStateContext } from "../contexts/ContextProvider";
 import { getNavbarLinks } from "../data/navbarLinks";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, useNavigate, NavLink } from "react-router-dom";
 import Swal from "sweetalert2";
 import useUser from "../hooks/use-user";
-import { MdMenuOpen } from "react-icons/md";
+import { FiUser } from "react-icons/fi";
 import { FaEdit } from "react-icons/fa";
-
+import { MdMenuOpen } from "react-icons/md";
+import qtechLogo from "../assets/qtechlogo.png";
 
 const formatTimeAgo = (timestamp) => {
   const now = new Date();
@@ -20,31 +21,25 @@ const formatTimeAgo = (timestamp) => {
 };
 
 const Navbar = () => {
-  const { activeMenu, logout, token, user } = useStateContext();
+   const { activeMenu, logout, token, user } = useStateContext();
   const userData = useUser();
-  const navigate = useNavigate();
-
-  const [navbarLinks, setNavbarLinks] = useState(null);
+ const navigate = useNavigate();
+   const [navbarLinks, setNavbarLinks] = useState(null);
   const [notifDropdown, setNotifDropdown] = useState(false);
   const [profileDropdown, setProfileDropdown] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [notifLoading, setNotifLoading] = useState(false);
   const [notifError, setNotifError] = useState(null);
-
   const mobileMenuCloseBtnRef = useRef(null);
-
-  // Load navbar links based on user role
   useEffect(() => {
-    if (userData) {
-      setNavbarLinks(getNavbarLinks(userData.role));
-    } else {
-      setNavbarLinks(null);
+    if (user) {
+      setNavbarLinks(getNavbarLinks(user.role));
     }
-  }, [userData]);
+  }, [user]);
 
-  // Fetch notifications when dropdown opens
-  useEffect(() => {
+
+   useEffect(() => {
     if (!notifDropdown) return;
     if (!token || !user?.id) return;
 
@@ -52,22 +47,28 @@ const Navbar = () => {
       setNotifLoading(true);
       setNotifError(null);
       try {
-        const url =
-          user?.role === "admin"
-            ? "http://localhost:8000/api/allTickets" // Admin sees all tickets
-            : "http://localhost:8000/api/tickets"; // User tickets endpoint fixed here
-
-        const res = await fetch(url, {
+        const { role } = user;
+          let url = "";
+        switch (role) {
+          case "customer":
+            url = `http://localhost:8000/api/Customernotifications/${user.id}`;
+            break;
+          case "admin":
+            url = "http://localhost:8000/api/allNotifications";
+            break;
+          case "agent":
+            url = `http://localhost:8000/api/agentnotifications/${user.id}`;
+            break;
+          default:
+            return;
+        }
+        if (!url) return;
+         const res = await fetch(url, {
           headers: { Authorization: `Bearer ${token}` },
         });
-
-        if (!res.ok)
-          throw new Error(
-            `Failed to fetch notifications: ${res.status} ${res.statusText}`
-          );
-
-        const data = await res.json();
+         const data = await res.json();
         setNotifications(Array.isArray(data) ? data : []);
+       
       } catch (error) {
         setNotifError(error.message || "Failed to load notifications");
       } finally {
@@ -78,9 +79,8 @@ const Navbar = () => {
     fetchNotifications();
   }, [notifDropdown, token, user]);
 
-  // Confirm logout
   const handleLogout = async () => {
-    const { isConfirmed } = await Swal.fire({
+    const result = await Swal.fire({
       title: "Are you sure to Logout?",
       icon: "warning",
       showCancelButton: true,
@@ -89,47 +89,13 @@ const Navbar = () => {
       confirmButtonText: "Logout",
     });
 
-    if (isConfirmed) {
+    if (result.isConfirmed) {
       await Swal.fire("Logged Out", "See you next time!", "success");
       logout();
-      navigate("/");
+      navigate("/signin");
     }
   };
-
-  // Handle notification click - navigate to notification details page
-  const handleNotifClick = useCallback(
-    (notif) => {
-      if (!notif || !notif.id) {
-        Swal.fire("Error", "Invalid notification data.", "error");
-        return;
-      }
-
-      const validRoles = ["admin", "agent", "customer"];
-      if (!validRoles.includes(user?.role)) {
-        Swal.fire("Error", "Invalid user role for navigation.", "error");
-        return;
-      }
-
-      navigate(`/${user.role}/notification/${notif.id}`, {
-        state: { notification: notif },
-      });
-      setNotifDropdown(false);
-    },
-    [navigate, user?.role]
-  );
-
-  // Toggle dropdowns
-  const toggleNotifDropdown = () => {
-    setNotifDropdown((prev) => !prev);
-    setProfileDropdown(false);
-  };
-
-  const toggleProfileDropdown = () => {
-    setProfileDropdown((prev) => !prev);
-    setNotifDropdown(false);
-  };
-
-  // Close dropdowns when clicking outside
+   // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       const notifDropdownEl = document.getElementById("notif-dropdown");
@@ -169,153 +135,150 @@ const Navbar = () => {
   }, [mobileMenuOpen]);
 
   return (
-    <nav className={`fixed top-0 w-full bg-white shadow flex justify-end p-4`}>
-      {/* Mobile menu toggle */}
+    <div
+      className={`fixed top-0 z-30  w-full flex justify-end items-center
+    px-4 sm:px-6 py-4
+    transition-all duration-300
+    ${
+      activeMenu
+        ? user?.role === "admin" || user?.role === "agent"
+          ? "lg:pl-72"
+          : "xl:pl-35"
+        : "lg:pl-25"
+    }
+    ${
+      user?.role === "customer"
+        ? "bg-white text-black shadow-xs"
+        : "bg-white text-black shadow-md"
+    }
+  `}
+    >
+      {/* Mobile View */}
       {user?.role === "customer" && (
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-          aria-expanded={mobileMenuOpen}
-          className="lg:hidden mr-4"
+          className="text-2xl mx-5 lg:hidden flex-2 cursor-pointer"
         >
           <MdMenuOpen className="rotate-180" />
         </button>
       )}
 
-      {/* Mobile menu overlay */}
       {mobileMenuOpen && (
-        <div
-          id="mobile-menu"
-          className="fixed inset-0 bg-[#08032B] text-white z-50 flex flex-col items-center justify-center gap-6 p-6"
-          role="dialog"
-          aria-modal="true"
-        >
-          {navbarLinks?.navLinks?.map((link) => (
-            <NavLink
-              key={link.name}
-              to={link.path}
-              onClick={() => setMobileMenuOpen(false)}
-              className={({ isActive }) =>
-                isActive
-                  ? "text-blue-500 font-semibold"
-                  : "text-white font-semibold"
-              }
-            >
-              {link.name}
-            </NavLink>
-          ))}
+        <div className="fixed inset-0 bg-[#08032B] text-white max-w-3/4 z-50 overflow-hidden flex flex-col items-center justify-center gap-6 p-6 transition-all duration-300">
+          {navbarLinks?.navLinks &&
+            navbarLinks.navLinks.map((link) => (
+              <NavLink
+                key={link.name}
+                to={link.path}
+                className={({ isActive }) =>
+                  `text-lg transition ${
+                    isActive
+                      ? "text-blue-500 font-semibold"
+                      : "text-white hover:text-blue-500 font-semibold"
+                  }`
+                }
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {link.name}
+              </NavLink>
+            ))}
 
           {user?.role === "customer" && (
-            <Link to="/customer/create-ticket" onClick={() => setMobileMenuOpen(false)}>
-              <button className="btn btn-primary">Create Ticket</button>
+            <Link
+              to="/customer/create-ticket"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <button className="bg-blue-500 hover:bg-blue-600 text-white py-3 px-6 rounded-md flex items-center justify-center cursor-pointer">
+                <FaEdit className="mr-2" /> Create Ticket
+              </button>
             </Link>
           )}
-
           <button
-            ref={mobileMenuCloseBtnRef}
             onClick={() => setMobileMenuOpen(false)}
-            aria-label="Close menu"
-            className="mt-8 underline"
+            className="absolute top-8 right-8 text-4xl cursor-pointer hover:text-blue-500"
           >
-            Close Menu
+            &times;
           </button>
         </div>
       )}
 
-      {/* Notifications button */}
-      <button
-        id="notif-button"
-        aria-haspopup="true"
-        aria-expanded={notifDropdown}
-        aria-controls="notif-dropdown"
-        onClick={toggleNotifDropdown}
-        className="relative mr-6"
-        title="Notifications"
-      >
-        <svg
-          className="w-6 h-6 text-gray-600"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-          />
-        </svg>
-        {notifications.length > 0 && (
-          <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold text-red-100 bg-red-600 rounded-full">
-            {notifications.length}
-          </span>
-        )}
-      </button>
+      {/* Desktop Navbar */}
+      {user?.role === "customer" && (
+        <div className="flex-1 items-center mx-3.5 xl:mx-0 hidden lg:flex">
+          <Link to="/customer/home">
+            <img
+              src={qtechLogo}
+              alt="Qtech Logo"
+              className="h-14 cursor-pointer"
+            />
+          </Link>
+        </div>
+      )}
 
-      {/* Notification dropdown and desktop navbar */}
-      {notifDropdown && (
-        <>
-          {user?.role === "customer" && (
-            <div className="flex-1 items-center mx-3.5 xl:mx-0 hidden lg:flex">
-              <Link to="/customer/home">
-                <img
-                  src={qtechLogo}
-                  alt="Qtech Logo"
-                  className="h-14 cursor-pointer"
-                />
-              </Link>
-            </div>
-          )}
-
-          <div className="items-center justify-center flex-4 hidden xl:flex">
-            {navbarLinks?.navLinks && (
-              <div className="flex items-center gap-10">
-                {navbarLinks.navLinks.map((link) => (
-                  <NavLink
-                    key={link.name}
-                    to={link.path}
-                    className={({ isActive }) =>
-                      `text-md transition ${
-                        isActive
-                          ? "text-blue-600 font-semibold"
-                          : "text-gray-800 hover:text-blue-600"
-                      }`
-                    }
-                  >
-                    {link.name}
-                  </NavLink>
-                ))}
-
-                {user?.role === "customer" && (
-                  <div>
-                    <Link to="/customer/create-ticket">
-                      <button className="bg-blue-500 hover:bg-blue-600 text-white py-1.5 px-4 rounded-md flex items-center justify-center w-full md:w-auto cursor-pointer">
-                        <FaEdit className="mr-2" /> Create Ticket
-                      </button>
-                    </Link>
-                  </div>
-                )}
+      <div className="items-center justify-center flex-4 hidden xl:flex">
+        {navbarLinks?.navLinks && (
+          <div className="flex items-center gap-10">
+            {navbarLinks.navLinks.map((link) => (
+              <NavLink
+                key={link.name}
+                to={link.path}
+                className={({ isActive }) =>
+                  `text-md transition ${
+                    isActive
+                      ? "text-blue-600 font-semibold"
+                      : "text-gray-800 hover:text-blue-600"
+                  }`
+                }
+              >
+                {link.name}
+              </NavLink>
+            ))}
+            {user?.role === "customer" && (
+              <div>
+                <Link to="/customer/create-ticket">
+                  <button className="bg-blue-500 hover:bg-blue-600 text-white py-1.5 px-4 rounded-md flex items-center justify-center w-full md:w-auto cursor-pointer">
+                    <FaEdit className="mr-2" /> Create Ticket
+                  </button>
+                </Link>
               </div>
             )}
           </div>
+        )}
+      </div>
 
-          {navbarLinks && (
-            <div
-              id="notif-dropdown"
-              role="menu"
-              aria-label="Notifications"
-              className="absolute right-4 top-14 w-80 max-h-96 overflow-auto bg-white border rounded shadow-lg z-50"
+      {navbarLinks && (
+        <div
+          className={`flex items-center py-3.5 gap-4 relative ${
+            user?.role === "admin" || user?.role === "agent"
+              ? "right-4"
+              : "right-4 lg:right-28"
+          }`}
+        >
+          {/* Notifications */}
+          <div className="relative">
+            <button
+              className="text-xl text-gray-800 border border-gray-500 rounded-t-full rounded-b-full p-2 hover:bg-gray-100 relative cursor-pointer"
+              onClick={() => {
+                setNotifDropdown(!notifDropdown);
+                setProfileDropdown(false);
+              }}
             >
-              {notifLoading && <div className="p-4">Loading...</div>}
-              {notifError && <div className="p-4 text-red-600">{notifError}</div>}
-              {!notifLoading && !notifError && notifications.length === 0 && (
-                <div className="p-4 text-gray-500">No notifications</div>
+              {navbarLinks.notifications.icon}
+              {navbarLinks.notifications.count > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
+                  {navbarLinks.notifications.count}
+                </span>
               )}
-              <ul>
-                {notifications.map((notif) => (
+            </button>
+            {notifDropdown && (
+              <div className="absolute right-0 mt-2 w-[26rem] bg-white shadow-lg rounded-lg z-50 p-4">
+                <p className="text-lg font-semibold mb-3 text-blue-600">
+                  Notifications
+                </p>
+                <ul className="space-y-3 max-h-80 overflow-y-auto">
+                   {notifications.map((notif) => (
                   <li
-                    key={notif.id}
+                    key={notif.ticket_id}
                     className="p-3 hover:bg-gray-100 cursor-pointer border-b last:border-b-0"
                     onClick={() => handleNotifClick(notif)}
                     tabIndex={0}
@@ -326,60 +289,87 @@ const Navbar = () => {
                     }}
                   >
                     <div className="font-semibold">
-                      {notif.customer_name
-                        ? `${notif.customer_name} posted a ticket`
-                        : "New notification"}
+                      {notif.name
+                        ? `${notif.name} posted a ticket`
+                        : `${notif.title}`}
                     </div>
                     <div className="text-xs text-gray-500">
                       {formatTimeAgo(notif.created_at)}
                     </div>
                   </li>
                 ))}
-              </ul>
+                </ul>
+                <Link
+                  to={navbarLinks.notifications.path}
+                  className="block text-blue-600 mt-3 text-center hover:underline"
+                  onClick={() => setNotifDropdown(false)}
+                >
+                  See All
+                </Link>
+              </div>
+            )}
+          </div>
+          {user ? (
+            <div className="relative">
+              <button
+                className="text-xl text-gray-800 border border-gray-500 rounded-t-full rounded-b-full p-2 hover:bg-gray-100 cursor-pointer"
+                onClick={() => {
+                  setProfileDropdown(!profileDropdown);
+                  setNotifDropdown(false);
+                }}
+              >
+                {user?.username || <FiUser />}
+              </button>
+              {profileDropdown && (
+                <div className="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-lg z-50 p-2 cursor-pointer">
+                  {navbarLinks.profileMenu.map((item) => {
+                    if (item.name === "Logout") {
+                      return (
+                        <button
+                          key={item.name}
+                          onClick={handleLogout}
+                          className="flex items-center gap-2 w-full px-3 py-2 text-left text-md hover:bg-gray-100 cursor-pointer text-gray-800 mt-4 pt-4 border-t border-gray-200"
+                        >
+                          <span className="text-lg">{item.icon}</span>
+                          <span className="text-md">{item.name}</span>
+                        </button>
+                      );
+                    }
+
+                    return (
+                      <Link
+                        key={item.name}
+                        to={item.path}
+                        className="flex items-center gap-2 px-3 py-2 text-md hover:bg-gray-100"
+                        onClick={() => setProfileDropdown(false)}
+                      >
+                        <span className="text-lg">{item.icon}</span>
+                        <span className="text-md">{item.name}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="flex gap-2">
+              <Link
+                to="/Signin"
+                className="text-blue-600 font-semibold hover:underline"
+              >
+                Sign In
+              </Link>
+              <Link
+                to="/Signup"
+                className="text-blue-600 font-semibold hover:underline"
+              >
+                Sign Up
+              </Link>
             </div>
           )}
-        </>
-      )}
-
-      {/* Profile dropdown */}
-      <button
-        id="profile-button"
-        aria-haspopup="true"
-        aria-expanded={profileDropdown}
-        aria-controls="profile-dropdown"
-        onClick={toggleProfileDropdown}
-        className="ml-4"
-        title="Profile options"
-      >
-        <img
-          src={user?.avatar || "/default-avatar.png"}
-          alt="User avatar"
-          className="w-8 h-8 rounded-full object-cover"
-        />
-      </button>
-
-      {profileDropdown && (
-        <div
-          id="profile-dropdown"
-          role="menu"
-          aria-label="Profile options"
-          className="absolute right-4 top-14 w-44 bg-white border rounded shadow-lg z-50"
-        >
-          <Link
-            to={`/${user?.role}/profile`}
-            className="block px-4 py-2 hover:bg-gray-100"
-          >
-            Profile
-          </Link>
-          <button
-            onClick={handleLogout}
-            className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-          >
-            Logout
-          </button>
         </div>
       )}
-    </nav>
+    </div>
   );
 };
 
