@@ -178,7 +178,7 @@ const AgentTicketdetails = () => {
           <div className="px-4 mt-6">
             <div className="text-gray-600 font-semibold mb-2">Attachment:</div>
             <div className="text-blue-600 underline cursor-pointer">
-              {ticketData.attachment || "No attachment available"}
+              {ticketData.image_path || "No attachment available"}
             </div>
           </div>
 

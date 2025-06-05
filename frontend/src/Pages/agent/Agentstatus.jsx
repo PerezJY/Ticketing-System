@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Sidebar } from "../../components/Sidebar";
 import { useParams } from "react-router-dom";
 import { useStateContext } from "../../contexts/ContextProvider";
+import {attachment} from ticket.image_path;
 
 function UpdateStatusModal({ isOpen, onClose, ticket, onSave }) {
   const [priority, setPriority] = useState(ticket.priority);
@@ -274,7 +275,7 @@ export default function Agentstatus() {
                   {[
                    
                     {
-                      name: "Company_Logo.png",
+                      name: ticket.image_path,
                       url: ticket.image_path,
                     },
                   ].map((file, i) => (
